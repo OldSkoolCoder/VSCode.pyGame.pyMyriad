@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+    ],
+    "settings": {
+        "files.autoSave": "afterDelay",
+        "editor.acceptSuggestionOnEnter": "off",
+        "editor.fontSize": 22
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.vscode-pylance",
+            "tushortz.pygame-snippets",
+            "streetsidesoftware.code-spell-checker",
+            "eamodio.gitlens",
+            "oderwat.indent-rainbow",
+            "coenraads.bracket-pair-colorizer",
+            "jgclark.vscode-todo-highlight"
+        ]
+    },
+}
