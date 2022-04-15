@@ -1,17 +1,22 @@
 # Game Options and Settings
+
 TITLE = "TITLE"
-FPS = 60
+FRAMES_PER_SECOND = 60
 
-class Dimensions:
-    class Screen:
-        WIDTH = 600
-        HEIGHT = 400
+class Screen:
+    WIDTH = 800
+    HEIGHT = 900
 
-    class PlayableArea:
-        Top = 0
-        Bottom = 400
-        LeftMost = 0
-        RightMost = 600
+class PlayableArea:
+    Top = 0
+    Bottom = Screen.HEIGHT
+    LeftMost = 0
+    RightMost = Screen.WIDTH
+
+class Player:
+    respawnX = ((PlayableArea.RightMost - PlayableArea.LeftMost) / 2) + PlayableArea.LeftMost
+    respawnY = PlayableArea.Bottom - 100
+    reloadTime = .05 * FRAMES_PER_SECOND
 
 class Colours:
     # Define Colours

@@ -1,4 +1,4 @@
-import pygame as pg
+import pygame
 import random
 import settings
 import game
@@ -10,6 +10,6 @@ while g.running:
     g.new()
     g.showGameOverScreen()
 
-pg.display.quit()
-pg.quit()
+pygame.display.quit()
+pygame.quit()
 
