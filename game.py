@@ -17,6 +17,7 @@ class Game:
 
         self.bullets = pygame.sprite.Group()
 
+
     def new(self):
         # Starts a new game
         self.allSprites = pygame.sprite.Group()
@@ -30,8 +31,9 @@ class Game:
         # Add Enemy Sprites
 
         # Add any other sprites
-
-        self.wave = 3
+        self.level = 1
+        self.wave = 1
+        self.powerUp = 0
         self.run()
 
     def run(self):

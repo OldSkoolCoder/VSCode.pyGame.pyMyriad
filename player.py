@@ -15,14 +15,13 @@ class Player(element.Element):
         self.thrustActive = False
         self.speed = 5
         self.timer = 0
-        self.held = 1       # Variable to hold reloading delay extender (Garymeg)
-        self.bulletSide=1   # Variable to hold side ship fires from (Garymeg)
+        self.rotateLeft = False
 
-        super().loadAnimationSeries('ShipFlames',self.noOfFrames)
+        super().loadAnimationSeries('ShipFlames',self.noOfFrames * 2)
         self.thrustedAnimationSet = self.animation.copy()
 
         self.animation.clear()
-        super().loadAnimationSeries('Ship',self.noOfFrames)
+        super().loadAnimationSeries('Ship',self.noOfFrames * 2)
         self.animationSet = self.animation.copy()
 
         self.animation.clear()
@@ -32,27 +31,41 @@ class Player(element.Element):
         self.HaveWeFired = False
 
     def events(self):
-        
         keys = pygame.key.get_pressed()
 
-        self.dx = 0
+        #changed so if left and right both pressed you go nowhere. 
+        self.dx = 0 
         if keys[pygame.K_LEFT]:
-            self.dx = -1
-        elif keys[pygame.K_RIGHT]:
-            self.dx = 1
+            self.dx -= 1
+            self.rotateLeft = True
+        if keys[pygame.K_RIGHT]:
+            self.dx += 1
+            self.rotateLeft = False
 
-        self.dy = 1
+        self.dy =  1
         if keys[pygame.K_UP]:
             self.thrustActive = True
             self.dy = -1
         else:
             self.thrustActive = False
 
+        if keys[pygame.K_1]:
+            self.game.powerUp = 0
+
+
+        if keys[pygame.K_2]:
+            self.game.powerUp = 1
+
+        if keys[pygame.K_3]:
+            self.game.powerUp = 2
+
+
+
         self.fireTimer -=1
 
-        if self.fireTimer < 0 and (self.timer > 0 or keys[pygame.K_SPACE]):
-            if self.timer == 0:
-                if self.bulletSide % 2:
+        if self.fireTimer < 0 and keys[pygame.K_SPACE] and not(self.HaveWeFired): 
+
+               if self.bulletSide % 2:
                     self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
                     self.bulletSide = 2
                 else:
@@ -66,6 +79,15 @@ class Player(element.Element):
         # is fire released?    (Garymeg)
         if not keys[pygame.K_SPACE]:
             self.held = 1                                           # reset autofire (Garymeg)
+
+          self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                self.HaveWeFired = True
+                self.fireTimer = settings.Player.reloadTime
+   
+        if not(keys[pygame.K_SPACE]) and self.HaveWeFired:
+            self.HaveWeFired = False
+
     def update(self):
         super().move(self.dx,0,self.speed-abs(self.dx))
         super().move(0,self.dy,self.speed-abs(self.dy))
@@ -75,6 +97,10 @@ class Player(element.Element):
             self.tickCounter = 0
 
         frameNo = int(self.tickCounter // self.ticksPerFrame)
+        if self.rotateLeft == True:
+            frameNo = 3 - frameNo
+        if self.HaveWeFired:
+            frameNo += 4
 
         #if (int(self.tickCounter // self.ticksPerFrame) == self.tickCounter / self.ticksPerFrame):
         if self.thrustActive:
