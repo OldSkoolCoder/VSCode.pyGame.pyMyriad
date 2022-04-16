@@ -6,12 +6,14 @@ import random
 class Bullet(element.Element):
     def __init__(self,game,x,y,wave):
 
-        imgDir = 'Lasers/SetC'
+        bulletSet = "CEG"[game.powerUp]
+
+        imgDir = 'Lasers/Set' + bulletSet
         super().__init__(game,x,y,imgDir)
 
         self.done = False
         
-        image = super().loadAnimationFrame('LaserC',wave - 1)
+        image = super().loadAnimationFrame('Laser' + bulletSet,wave - 1)
         image1 = pygame.transform.rotozoom(image,90,.25)
 
         self.animation.append(image1)
@@ -24,6 +26,7 @@ class Bullet(element.Element):
         self.noOfFrames = 2
 
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / 4
+        
 
     def update(self):
         self.Y -=24
