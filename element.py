@@ -36,19 +36,25 @@ class Element (pygame.sprite.Sprite):
             imageFrame = pygame.transform.rotozoom(imageFrame,angle,zoom)
         return imageFrame
 
-    def loadAnimationSeries(self, imageName, NoOfFrames):
+    def loadAnimationSeries(self, imageName, NoOfFrames,angle=0,zoom=1):
         for frameNo in range(NoOfFrames):    # NoOfFrames = 10 = 0 -> 9
-            self.animation.append(self.loadAnimationFrame(imageName,frameNo))
+            self.animation.append(self.loadAnimationFrame(imageName,frameNo,angle,zoom))
 
     def move(self, dX, dY, speed, TestForBorder = True):
+
+        didWeMove = True
         for i in range(speed):
             if TestForBorder:
                 if self.allowedToMove(self.X + dX, self.Y + dY):
                     self.X += dX
                     self.Y += dY
+                else:
+                    didWeMove = False
             else:
                 self.X += dX
                 self.Y += dY
+        
+        return didWeMove
 
     def setAnimationFrame(self,frameImage,useCentre):
         self.image = frameImage
