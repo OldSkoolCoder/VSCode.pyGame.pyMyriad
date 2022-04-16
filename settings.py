@@ -4,8 +4,8 @@ TITLE = "TITLE"
 FRAMES_PER_SECOND = 60
 
 class Screen:
-    WIDTH = 800
-    HEIGHT = 900
+    WIDTH = 700             # Had to adjust for my laptop screen size (garymeg)
+    HEIGHT = 800            # Had to adjust for my laptop screen size (garymeg)
 
 class PlayableArea:
     Top = 0
@@ -16,7 +16,7 @@ class PlayableArea:
 class Player:
     respawnX = ((PlayableArea.RightMost - PlayableArea.LeftMost) / 2) + PlayableArea.LeftMost
     respawnY = PlayableArea.Bottom - 100
-    reloadTime = .05 * FRAMES_PER_SECOND
+    reloadTime = .025 * FRAMES_PER_SECOND       # Halfed the time to get alternating bullets (garymeg)
 
 class Colours:
     # Define Colours

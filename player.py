@@ -1,4 +1,3 @@
-from telnetlib import GA
 import pygame
 import settings
 import element
@@ -65,7 +64,23 @@ class Player(element.Element):
         self.fireTimer -=1
 
         if self.fireTimer < 0 and keys[pygame.K_SPACE] and not(self.HaveWeFired): 
-                self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+
+               if self.bulletSide % 2:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+                    self.bulletSide = 2
+                else:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                    self.bulletSide = 1
+                    
+            self.timer = (self.timer + 1) % 3
+            self.fireTimer = settings.Player.reloadTime * self.held # self.held is a time multiplyer to slow rapidfire down (Garymeg)
+            self.held += 0.05                                        # keep slowing down rapidfire (Garymeg)
+            
+        # is fire released?    (Garymeg)
+        if not keys[pygame.K_SPACE]:
+            self.held = 1                                           # reset autofire (Garymeg)
+
+          self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
                 self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
                 self.HaveWeFired = True
                 self.fireTimer = settings.Player.reloadTime
