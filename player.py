@@ -15,6 +15,8 @@ class Player(element.Element):
         self.thrustActive = False
         self.speed = 5
         self.timer = 0
+        self.held = 1       # Variable to hold reloading delay extender (Garymeg)
+        self.bulletSide=1   # Variable to hold side ship fires from (Garymeg)
 
         super().loadAnimationSeries('ShipFlames',self.noOfFrames)
         self.thrustedAnimationSet = self.animation.copy()
@@ -30,6 +32,7 @@ class Player(element.Element):
         self.HaveWeFired = False
 
     def events(self):
+        
         keys = pygame.key.get_pressed()
 
         self.dx = 0
@@ -49,12 +52,20 @@ class Player(element.Element):
 
         if self.fireTimer < 0 and (self.timer > 0 or keys[pygame.K_SPACE]):
             if self.timer == 0:
-                self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
-                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
-
+                if self.bulletSide % 2:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+                    self.bulletSide = 2
+                else:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                    self.bulletSide = 1
+                    
             self.timer = (self.timer + 1) % 3
-            self.fireTimer = settings.Player.reloadTime
-
+            self.fireTimer = settings.Player.reloadTime * self.held # self.held is a time multiplyer to slow rapidfire down (Garymeg)
+            self.held += 0.05                                        # keep slowing down rapidfire (Garymeg)
+            
+        # is fire released?    (Garymeg)
+        if not keys[pygame.K_SPACE]:
+            self.held = 1                                           # reset autofire (Garymeg)
     def update(self):
         super().move(self.dx,0,self.speed-abs(self.dx))
         super().move(0,self.dy,self.speed-abs(self.dy))
