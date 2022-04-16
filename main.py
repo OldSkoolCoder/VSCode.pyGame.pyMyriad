@@ -2,7 +2,7 @@ import pygame
 import random
 import settings
 import game
-#import sprites
+#import sprites 
 
 g = game.Game()
 g.showStartScreen()
