@@ -2,6 +2,7 @@ import pygame
 import settings
 import element
 import bullet
+import shield
 
 class Player(element.Element):
     def __init__(self,game):
@@ -19,6 +20,11 @@ class Player(element.Element):
         self.haveWeFired = False
         self.held = 1       # Variable to hold reloading delay extender (Garymeg)
         self.bulletSide = 1 # Variable to hold side ship fires from (Garymeg)
+        self.invincible = False # Shield Flag
+
+        #TODO : Sort out Sprite
+        self.shieldSprite = shield.Shield(game,self.X,self.Y)
+        self.game.allSprites.add(self.shieldSprite)
 
         super().loadAnimationSeries('ShipFlames',self.noOfFrames * 2)
         self.thrustedAnimationSet = self.animation.copy()
@@ -63,7 +69,7 @@ class Player(element.Element):
 
         self.fireTimer -=1
 
-        if self.fireTimer < 0 and keys[pygame.K_SPACE]:
+        if self.fireTimer < 0 and keys[pygame.K_SPACE] and not self.invincible:
             self.shootLaser()
                     
         if self.game.fireMode == settings.Player.rapidFire:
@@ -73,6 +79,9 @@ class Player(element.Element):
         else:
             if not(keys[pygame.K_SPACE]) and self.haveWeFired:
                 self.haveWeFired = False
+
+        if keys[pygame.K_RETURN]:
+            self.activateShield()
 
     def update(self):
         super().move(self.dX,0,self.speed-abs(self.dX))
@@ -113,6 +122,6 @@ class Player(element.Element):
                 self.haveWeFired = True
                 self.fireTimer = settings.Player.reloadTime
 
-        #self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
-        #self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
-        #self.haveWeFired = True
+    def activateShield(self):
+        self.invincible = True
+        self.shieldSprite.activateShield()

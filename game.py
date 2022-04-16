@@ -17,6 +17,8 @@ class Game:
         self.fireMode = settings.Player.singleShot
         #self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
+        self.bgY = 0
+        self.bgRelY = 0
 
         self.bullets = pygame.sprite.Group()
 
@@ -37,7 +39,13 @@ class Game:
         self.level = 1
         self.wave = 1
         self.powerUp = 0
+
+        self.newLevel()
         self.run()
+
+    def newLevel(self):
+        backgroundFrameNo = format(str(self.level).rjust(2,'0')) 
+        self.background = pygame.image.load(f'Assets/BackDrops/Background{backgroundFrameNo}.jpg')
 
     def run(self):
         # Game Loop Code
@@ -69,7 +77,15 @@ class Game:
 
     def draw(self):
         # Game Loop draw screen
-        self.screen.fill(settings.Colours.BLACK)
+        # self.screen.fill(settings.Colours.BLACK)
+        self.bgRelY = self.bgY % self.background.get_rect().height
+
+        # Draw Section
+        self.screen.blit(self.background, (0,(self.bgRelY - self.background.get_rect().height)))
+        if self.bgRelY < settings.Screen.HEIGHT:
+            self.screen.blit(self.background, (0,self.bgRelY))
+        self.bgY +=1
+
         self.allSprites.draw(self.screen)
         self.bullets.draw(self.screen)
 

@@ -19,6 +19,13 @@ class Player:
     reloadTime = .025 * FRAMES_PER_SECOND       # Halfed the time to get alternating bullets (garymeg)
     singleShot = 1
     rapidFire = 2
+
+    invincibleDuration = 3
+    invincibleDurationFPS = invincibleDuration * FRAMES_PER_SECOND
+    shieldActiveTime = 15
+    shieldActiveTimeFPS = shieldActiveTime * FRAMES_PER_SECOND
+    shieldActiveTimeWarningFPS = (shieldActiveTime - invincibleDuration) * FRAMES_PER_SECOND
+
     
 class Colours:
     # Define Colours
