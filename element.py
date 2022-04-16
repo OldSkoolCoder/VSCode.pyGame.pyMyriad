@@ -26,20 +26,27 @@ class Element (pygame.sprite.Sprite):
 
         self.animation = []
 
-    def loadAnimationFrame(self, imageName, frameNo):
+    def loadAnimationFrame(self, imageName, frameNo, angle=0,zoom=1):
         frameNumber = format(str(frameNo).rjust(3,'0'))
         # 'Assets/Asteroids/seta001.png'
         filename = f'Assets/{self.imageDir}/{imageName}{frameNumber}.png'
         imageFrame = pygame.image.load(filename)#.convert()
+
+        if angle !=0 or zoom != 1:
+            imageFrame = pygame.transform.rotozoom(imageFrame,angle,zoom)
         return imageFrame
 
     def loadAnimationSeries(self, imageName, NoOfFrames):
         for frameNo in range(NoOfFrames):    # NoOfFrames = 10 = 0 -> 9
             self.animation.append(self.loadAnimationFrame(imageName,frameNo))
 
-    def move(self, dX, dY, speed):
+    def move(self, dX, dY, speed, TestForBorder = True):
         for i in range(speed):
-            if self.allowedToMove(self.X + dX, self.Y + dY):
+            if TestForBorder:
+                if self.allowedToMove(self.X + dX, self.Y + dY):
+                    self.X += dX
+                    self.Y += dY
+            else:
                 self.X += dX
                 self.Y += dY
 
@@ -61,5 +68,5 @@ class Element (pygame.sprite.Sprite):
                     ((Y + height) > settings.PlayableArea.Bottom):
             return False
         else:
-           return True
+            return True
 

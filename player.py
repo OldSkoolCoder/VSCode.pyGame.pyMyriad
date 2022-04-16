@@ -16,6 +16,9 @@ class Player(element.Element):
         self.speed = 5
         self.timer = 0
         self.rotateLeft = False
+        self.haveWeFired = False
+        self.held = 1       # Variable to hold reloading delay extender (Garymeg)
+        self.bulletSide = 1 # Variable to hold side ship fires from (Garymeg)
 
         super().loadAnimationSeries('ShipFlames',self.noOfFrames * 2)
         self.thrustedAnimationSet = self.animation.copy()
@@ -28,24 +31,23 @@ class Player(element.Element):
         super().setAnimationFrame(self.animationSet[0],True)
 
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / self.noOfFrames
-        self.HaveWeFired = False
 
     def events(self):
         keys = pygame.key.get_pressed()
 
         #changed so if left and right both pressed you go nowhere. 
-        self.dx = 0 
+        self.dX = 0 
         if keys[pygame.K_LEFT]:
-            self.dx -= 1
+            self.dX -= 1
             self.rotateLeft = True
         if keys[pygame.K_RIGHT]:
-            self.dx += 1
+            self.dX += 1
             self.rotateLeft = False
 
-        self.dy =  1
+        self.dY =  1
         if keys[pygame.K_UP]:
             self.thrustActive = True
-            self.dy = -1
+            self.dY = -1
         else:
             self.thrustActive = False
 
@@ -59,38 +61,22 @@ class Player(element.Element):
         if keys[pygame.K_3]:
             self.game.powerUp = 2
 
-
-
         self.fireTimer -=1
 
-        if self.fireTimer < 0 and keys[pygame.K_SPACE] and not(self.HaveWeFired): 
-
-               if self.bulletSide % 2:
-                    self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
-                    self.bulletSide = 2
-                else:
-                    self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
-                    self.bulletSide = 1
+        if self.fireTimer < 0 and keys[pygame.K_SPACE]:
+            self.shootLaser()
                     
-            self.timer = (self.timer + 1) % 3
-            self.fireTimer = settings.Player.reloadTime * self.held # self.held is a time multiplyer to slow rapidfire down (Garymeg)
-            self.held += 0.05                                        # keep slowing down rapidfire (Garymeg)
-            
-        # is fire released?    (Garymeg)
-        if not keys[pygame.K_SPACE]:
-            self.held = 1                                           # reset autofire (Garymeg)
-
-          self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
-                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
-                self.HaveWeFired = True
-                self.fireTimer = settings.Player.reloadTime
-   
-        if not(keys[pygame.K_SPACE]) and self.HaveWeFired:
-            self.HaveWeFired = False
+        if self.game.fireMode == settings.Player.rapidFire:
+            # is fire released?    (Garymeg)
+            if not keys[pygame.K_SPACE]:
+                self.held = 1                                           # reset autofire (Garymeg)
+        else:
+            if not(keys[pygame.K_SPACE]) and self.haveWeFired:
+                self.haveWeFired = False
 
     def update(self):
-        super().move(self.dx,0,self.speed-abs(self.dx))
-        super().move(0,self.dy,self.speed-abs(self.dy))
+        super().move(self.dX,0,self.speed-abs(self.dX))
+        super().move(0,self.dY,self.speed-abs(self.dY))
 
         self.tickCounter += 1
         if self.tickCounter >= settings.FRAMES_PER_SECOND:
@@ -99,7 +85,7 @@ class Player(element.Element):
         frameNo = int(self.tickCounter // self.ticksPerFrame)
         if self.rotateLeft == True:
             frameNo = 3 - frameNo
-        if self.HaveWeFired:
+        if self.haveWeFired:
             frameNo += 4
 
         #if (int(self.tickCounter // self.ticksPerFrame) == self.tickCounter / self.ticksPerFrame):
@@ -107,3 +93,26 @@ class Player(element.Element):
             super().setAnimationFrame(self.thrustedAnimationSet[frameNo],True)
         else:
             super().setAnimationFrame(self.animationSet[frameNo],True)
+
+    def shootLaser(self):
+        if self.game.fireMode == settings.Player.rapidFire:
+            if self.bulletSide % 2:
+                self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+                self.bulletSide = 2
+            else:
+                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                self.bulletSide = 1
+
+            self.fireTimer = settings.Player.reloadTime * self.held # self.held is a time multiplyer to slow rapidfire down (Garymeg)
+            self.held += 0.05                                        # keep slowing down rapidfire (Garymeg)
+
+        else:
+            if not(self.haveWeFired):
+                self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                self.haveWeFired = True
+                self.fireTimer = settings.Player.reloadTime
+
+        #self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+        #self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+        #self.haveWeFired = True

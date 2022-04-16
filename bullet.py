@@ -12,24 +12,26 @@ class Bullet(element.Element):
         super().__init__(game,x,y,imgDir)
 
         self.done = False
-        
-        image = super().loadAnimationFrame('Laser' + bulletSet,wave - 1)
-        image1 = pygame.transform.rotozoom(image,90,.25)
 
-        self.animation.append(image1)
+        image = super().loadAnimationFrame(f'Laser{bulletSet}',wave - 1, 90, 0.25)
+        #image1 = pygame.transform.rotozoom(image,90,.25)
 
-        image2 = pygame.transform.flip(image1,True,False)
-        self.animation.append(image2)
+        self.animation.append(image)
+
+        image = pygame.transform.flip(image,True,False)
+        self.animation.append(image)
 
         super().setAnimationFrame(self.animation[0],True)
 
         self.noOfFrames = 2
+        self.speed = 24
 
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / 4
         
 
     def update(self):
-        self.Y -=24
+        super().move(0,-1,self.speed-1,False)
+        #self.Y -=24
 
         self.tickCounter += 1
         if self.tickCounter >= settings.FRAMES_PER_SECOND:

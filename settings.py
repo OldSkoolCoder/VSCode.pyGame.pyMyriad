@@ -17,7 +17,9 @@ class Player:
     respawnX = ((PlayableArea.RightMost - PlayableArea.LeftMost) / 2) + PlayableArea.LeftMost
     respawnY = PlayableArea.Bottom - 100
     reloadTime = .025 * FRAMES_PER_SECOND       # Halfed the time to get alternating bullets (garymeg)
-
+    singleShot = 1
+    rapidFire = 2
+    
 class Colours:
     # Define Colours
     ALICEBLUE = (240, 248, 255)

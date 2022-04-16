@@ -14,6 +14,9 @@ class Game:
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
+        self.fireMode = settings.Player.singleShot
+        #self.fireMode = settings.Player.rapidFire
+        self.showHitBoxes = False
 
         self.bullets = pygame.sprite.Group()
 
@@ -54,8 +57,9 @@ class Game:
         self.removeDoneBullets()
 
     def events(self):
-        # Game Loop Events handler
         self.Player.events()
+
+        # Game Loop Events handler
         for event in pygame.event.get():
             # check for closing the window
             if event.type == pygame.QUIT:

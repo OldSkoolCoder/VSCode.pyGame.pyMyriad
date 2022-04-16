@@ -18,7 +18,8 @@
             "eamodio.gitlens",
             "oderwat.indent-rainbow",
             "coenraads.bracket-pair-colorizer",
-            "jgclark.vscode-todo-highlight"
+            "jgclark.vscode-todo-highlight",
+            "streetsidesoftware.code-spell-checker"
         ]
     },
 }
