@@ -2,7 +2,7 @@ import pygame
 import settings
 import element
 import hostile
-#import random
+import random
 
 class Swooper(hostile.Hostile):
     def __init__(self,game,HostileNo,Wave):
@@ -21,7 +21,7 @@ class Swooper(hostile.Hostile):
 
         if self.movementTimer == 0:
             self.determineRandomChangeOfDirection()
+            self.Colour = random.randint(0,7)
 
         self.updateMovementTimer()
-
         super().setAnimationFrame(self.animation[self.Colour],True)
