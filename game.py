@@ -14,6 +14,8 @@ import meteorite
 import asteroid
 import swoopers
 import fighters
+import text
+import miner
 
 class Game:
     def __init__(self):
@@ -24,8 +26,8 @@ class Game:
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
-        self.fireMode = settings.Player.singleShot
-        #self.fireMode = settings.Player.rapidFire
+        #self.fireMode = settings.Player.singleShot
+        self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
         self.bgY = 0
         self.bgRelY = 0
@@ -48,7 +50,7 @@ class Game:
 
     def new(self):
         self.level = 1
-        self.wave = 7
+        self.wave = 0
         self.powerUp = 0
 
         # Starts a new game
@@ -63,46 +65,24 @@ class Game:
         self.allSprites.add(self.Player)
 
         # Add Enemy Sprites
-        for i in range(self.level * settings.Hostile.noPerLevel):
-            if self.wave == 1:
-                self.hostiles.add(floaters.Floater(self, i, self.wave))
-            elif self.wave == 2:
-                self.hostiles.add(swoopers.Swooper(self, i, self.wave))
-            elif self.wave == 3:
-                self.hostiles.add(buzzers.Buzzers(self, i, self.wave))
-            elif self.wave == 4:
-                self.hostiles.add(meteorite.Meteorite(self))
-            elif self.wave == 5:
-                self.hostiles.add(boxes.Box(self, i, self.wave))
-            elif self.wave == 6:
-                pass
-            elif self.wave == 7:
-                self.hostiles.add(fighters.Fighter(self, i, self.wave))
-            elif self.wave == 8:
-                pass
-            elif self.wave == 9:
-                self.hostiles.add(asteroid.Asteroid(self))
-
-            if (self.wave != 4 or self.wave != 9):
-                if random.random() < .04:
-                    self.hostiles.add(meteorite.Meteorite(self))
-                else:
-                    if random.random() < .04:
-                        self.hostiles.add(asteroid.Asteroid(self))
-
 
         self.newLevel()
         self.run()
 
     def newLevel(self):
         backgroundFrameNo = format(str(self.level).rjust(2,'0')) 
-        self.background = pygame.image.load(f'Assets/BackDrops/Background{backgroundFrameNo}.jpg')
+        self.background = pygame.image.load(f'Assets/BackDrops/scrollable/Background{backgroundFrameNo}.jpg')
 
     def run(self):
         # Game Loop Code
         self.playing = True
         while self.playing:
             self.clock.tick(settings.FRAMES_PER_SECOND)
+            if len(self.hostiles) <= self.level + 1:
+                self.addNextWaveLevelOfAliens()
+                self.newLevel()
+
+            print(len(self.hostiles))
             self.events()
             self.update()
             self.draw()
@@ -127,6 +107,7 @@ class Game:
         self.removeDoneBullets()
         self.removeDeadHostiles()
         self.removeExplosions()
+        self.removeDeadOrdinance()
 
     def events(self):
         self.Player.events()
@@ -152,7 +133,7 @@ class Game:
         self.screen.blit(self.background, (0,(self.bgRelY - self.background.get_rect().height)))
         if self.bgRelY < settings.Screen.HEIGHT:
             self.screen.blit(self.background, (0,self.bgRelY))
-        self.bgY +=1
+        self.bgY +=0.5
 
         self.allSprites.draw(self.screen)
         self.bullets.draw(self.screen)
@@ -198,20 +179,6 @@ class Game:
 
     def bulletHitHostiles(self):
         for eachBullet in self.bullets:
-            #hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False) # Regular Square Hit Box
-            hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
-            if hostilesHits:
-                for eachHostile in hostilesHits:
-                    if not eachHostile.reflective:
-                        #Add Explosion to Sprite Array
-                        self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
-                        eachHostile.imDead = True
-                        self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
-                    else:
-                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave))
-                
-                eachBullet.done = True
-
             ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False) # Regular Square Hit Box
             #ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False, pygame.sprite.collide_circle) # Using Circle Hit Box
             if ordinanceHits:
@@ -222,6 +189,22 @@ class Game:
                 
                 eachBullet.done = True
 
+            #hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False) # Regular Square Hit Box
+            hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+            if hostilesHits:
+                for eachHostile in hostilesHits:
+                    if not eachHostile.reflective:
+                        #Add Explosion to Sprite Array
+                        self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                        eachHostile.imDead = True
+                        self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                        self.hostiles.remove(eachHostile)
+                    else:
+                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave))
+                
+                eachBullet.done = True
+
+
     def removeDeadHostiles(self):
         for eachHostile in self.hostiles:
             if eachHostile.imDead:
@@ -231,6 +214,11 @@ class Game:
         for eachExplosion in self.explosions:
             if eachExplosion.imDone:
                 self.explosions.remove(eachExplosion)
+
+    def removeDeadOrdinance(self):
+        for eachOrdinance in self.ordinance:
+            if eachOrdinance.imDead:
+                self.ordinance.remove(eachOrdinance)
 
     def loadAnimationFrame(self, imageDir, imageName, frameNo, angle=0,zoom=1):
         frameNumber = format(str(frameNo).rjust(3,'0'))
@@ -245,3 +233,42 @@ class Game:
     def loadAnimationSeries(self, imageDir, imageName, NoOfFrames, animationSet, angle=0,zoom=1):
         for frameNo in range(NoOfFrames):    # NoOfFrames = 10 = 0 -> 9
             animationSet.append(self.loadAnimationFrame(imageDir,imageName,frameNo,angle,zoom))
+
+    def addNextWaveLevelOfAliens(self):
+        self.wave +=1
+        if self.wave > 9:
+            self.level +=1
+            self.wave = 1
+
+        WaveTitle = f'Get Ready - Entering Wave {self.wave}'
+        textWaveTitle = text.Text(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, WaveTitle, 'Vinegar Stroke',50)
+        self.points.append(textWaveTitle)
+
+        for i in range(self.level * settings.Hostile.noPerLevel):
+            if self.wave == 1:
+                self.hostiles.add(floaters.Floater(self, i, self.wave))
+            elif self.wave == 2:
+                self.hostiles.add(swoopers.Swooper(self, i, self.wave))
+            elif self.wave == 3:
+                self.hostiles.add(buzzers.Buzzers(self, i, self.wave))
+            elif self.wave == 4:
+                self.hostiles.add(meteorite.Meteorite(self))
+            elif self.wave == 5:
+                self.hostiles.add(boxes.Box(self, i, self.wave))
+            elif self.wave == 6:
+                self.hostiles.add(miner.Miner(self, i, self.wave))
+            elif self.wave == 7:
+                self.hostiles.add(fighters.Fighter(self, i, self.wave))
+            elif self.wave == 8:
+                pass
+            elif self.wave == 9:
+                self.hostiles.add(asteroid.Asteroid(self))
+
+            # if (self.wave != 4 or self.wave != 9):
+            #     if random.random() < .04:
+            #         self.hostiles.add(meteorite.Meteorite(self))
+            #     else:
+            #         if random.random() < .04:
+            #             self.hostiles.add(asteroid.Asteroid(self))
+
+

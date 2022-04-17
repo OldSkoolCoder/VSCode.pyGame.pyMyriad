@@ -26,11 +26,11 @@ class Player(element.Element):
         self.shieldSprite = shield.Shield(game,self.X,self.Y)
         self.game.allSprites.add(self.shieldSprite)
 
-        super().loadAnimationSeries('ShipFlames',self.noOfFrames * 2)
+        super().loadAnimationSeries('ShipFlames',self.noOfFrames * 2,0,.5)
         self.thrustedAnimationSet = self.animation.copy()
 
         self.animation.clear()
-        super().loadAnimationSeries('Ship',self.noOfFrames * 2)
+        super().loadAnimationSeries('Ship',self.noOfFrames * 2,0,.5)
         self.animationSet = self.animation.copy()
 
         self.animation.clear()
@@ -106,10 +106,10 @@ class Player(element.Element):
     def shootLaser(self):
         if self.game.fireMode == settings.Player.rapidFire:
             if self.bulletSide % 2:
-                self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
+                self.game.bullets.add(bullet.Bullet(self.game, self.X-9, (self.Y - self.rect.height/2),self.game.wave))
                 self.bulletSide = 2
             else:
-                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                self.game.bullets.add(bullet.Bullet(self.game, self.X+9, (self.Y - self.rect.height/2),self.game.wave))
                 self.bulletSide = 1
 
             self.fireTimer = settings.Player.reloadTime * self.held # self.held is a time multiplyer to slow rapidfire down (Garymeg)
@@ -117,8 +117,8 @@ class Player(element.Element):
 
         else:
             if not(self.haveWeFired):
-                self.game.bullets.add(bullet.Bullet(self.game, self.X-12, (self.Y - self.rect.height/2),self.game.wave))
-                self.game.bullets.add(bullet.Bullet(self.game, self.X+12, (self.Y - self.rect.height/2),self.game.wave))
+                self.game.bullets.add(bullet.Bullet(self.game, self.X-9, (self.Y - self.rect.height/2),self.game.wave))
+                self.game.bullets.add(bullet.Bullet(self.game, self.X+9, (self.Y - self.rect.height/2),self.game.wave))
                 self.haveWeFired = True
                 self.fireTimer = settings.Player.reloadTime
 

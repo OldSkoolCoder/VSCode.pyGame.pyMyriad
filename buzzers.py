@@ -2,6 +2,7 @@ import pygame
 import settings
 import element
 import hostile
+import bomb
 import random
 
 class Buzzers(hostile.Hostile):
@@ -30,9 +31,13 @@ class Buzzers(hostile.Hostile):
 
         if self.movementTimer == 0 and not self.dropping:
             if self.fourPercentChance():
+                self.game.ordinance.add(bomb.Bomb(self.game, self.X, self.Y + self.rect.height/2))
+
+            if self.fourPercentChance():
                 self.dropping = True
                 self.dX = 0
                 self.dY = 1
+
 
         self.updateMovementTimer()
 

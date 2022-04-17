@@ -2,11 +2,12 @@ import pygame
 import settings
 import element
 import hostile
+import bomb
 import random
 
 class Floater(hostile.Hostile):
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave, 0.15)
+        super().__init__(game,HostileNo,Wave,0.3)
 
         self.movementTimer = 1
 
@@ -21,6 +22,10 @@ class Floater(hostile.Hostile):
         self.wrapBottomToTop()
 
         self.zigzagMovement(self.movementTimer)
+
+        if self.movementTimer == 0:
+            if self.fourPercentChance():
+                self.game.ordinance.add(bomb.Bomb(self.game, self.X, self.Y + self.rect.height/2))
 
         self.updateMovementTimer()
 

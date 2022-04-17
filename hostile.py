@@ -6,7 +6,7 @@ import random
 
 class Hostile(element.Element):
 
-    def __init__(self,game,HostileNo,Wave,Scale=.2):
+    def __init__(self,game,HostileNo,Wave,Scale=0.5):
         sWave = format(str(Wave).rjust(2,'0'))
         imgDir = f'Aliens/SpaceShips/Wave{sWave}'
         super().__init__(game, 0, 0, imgDir)
@@ -17,8 +17,7 @@ class Hostile(element.Element):
         self.Colour = random.randint(0,7)
         super().setAnimationFrame(self.animation[self.Colour],True)
 
-        if HostileNo != 0:
-            self.determineInitalPosition(HostileNo)
+        self.determineInitalPosition(HostileNo)
 
         self.imDead = False
         self.myValue = 100

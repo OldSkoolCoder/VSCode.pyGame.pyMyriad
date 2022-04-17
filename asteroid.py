@@ -7,7 +7,7 @@ class Asteroid(element.Element):
     def __init__(self,game):
 
         imgDir = f'/Asteroids/Large'
-        super().__init__(game,0,0,imgDir)
+        super().__init__(game,-50,-50,imgDir)
 
         asteroidSet = "ABCDEFG"[random.randint(0,6)]
         self.rotation = random.randint(0,1)

@@ -7,7 +7,7 @@ class Meteorite(element.Element):
     def __init__(self,game):
 
         imgDir = f'/Asteroids/Small'
-        super().__init__(game,0,0,imgDir)
+        super().__init__(game,-50,-50,imgDir)
 
         meteorSet = "ABCDEF"[random.randint(0,5)]
         self.rotation = random.randint(0,1)

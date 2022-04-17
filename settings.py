@@ -26,7 +26,7 @@ class Player:
     shieldActiveTimeWarningFPS = (shieldActiveTime - invincibleDuration) * FRAMES_PER_SECOND
 
 class Hostile:
-    maxHostilesPerRow = 10
+    maxHostilesPerRow = 15
     noPerLevel = 20
 
 class Point:
