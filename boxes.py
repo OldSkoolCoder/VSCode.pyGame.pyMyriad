@@ -7,17 +7,18 @@ import random
 class Box(hostile.Hostile):
 
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave, 0.5)
+        super().__init__(game,HostileNo,Wave, 0.4)
         self.animationSet = self.animation.copy()
         
         self.animation.clear()
-        super().loadAnimationSeries('Alien15-',self.noOfFrames,0,0.5)
+        super().loadAnimationSeries('Alien15-',self.noOfFrames,0,0.4)
         self.animationSetShielded = self.animation.copy()
         self.animation.clear()
 
         self.myValue = 250
         self.reflective = False
 
+        self.speed = 2
         self.movementTimerReset = settings.FRAMES_PER_SECOND
         self.movementTimer = 1
 

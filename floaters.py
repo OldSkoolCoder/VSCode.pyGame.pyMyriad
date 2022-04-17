@@ -6,9 +6,8 @@ import random
 
 class Floater(hostile.Hostile):
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave)
+        super().__init__(game,HostileNo,Wave, 0.15)
 
-        self.movementTimerReset = settings.FRAMES_PER_SECOND
         self.movementTimer = 1
 
         self.dY = 0

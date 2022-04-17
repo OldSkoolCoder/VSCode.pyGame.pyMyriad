@@ -1,5 +1,6 @@
 import pygame
 import settings
+import random
 
 class Element (pygame.sprite.Sprite):
     def __init__(self,game,x,y,ImgDir):
@@ -17,6 +18,7 @@ class Element (pygame.sprite.Sprite):
         self.tickCounter = 0
         self.noOfFrames = 0
         self.ticksPerFrame = 0
+        self.speed = 3
 
         self.imageDir = ImgDir
         self.image = None 
@@ -56,10 +58,10 @@ class Element (pygame.sprite.Sprite):
         
         return didWeMove
 
-    def setAnimationFrame(self,frameImage,useCentre):
+    def setAnimationFrame(self,frameImage,useCentre,hitBoxScaler=0.8):
         self.image = frameImage
         self.rect = self.image.get_rect()
-        self.radius = int(self.rect.height * .8 / 2)
+        self.radius = int(self.rect.height * hitBoxScaler / 2)
 
         if useCentre:
             self.rect.centerx = self.X
@@ -93,3 +95,27 @@ class Element (pygame.sprite.Sprite):
         else:
             return False
 
+    def determineRandomDirection(self):
+        randNo = random.random()
+        if randNo > .66:
+            return 0    # Stood Still
+        elif randNo > .33:
+            return -1   # Up or Left
+        return 1        # Down or Right
+
+    def fallOffTheBottom(self):
+        if not self.move(0,self.dY,self.speed) and self.dY == 1:
+            self.imDead = True
+
+    def wrapBottomToTop(self):
+        if not self.move(0,self.dY,self.speed) and self.dY == 1:
+            self.Y = 5 + self.rect.height / 2
+            return True
+        return False
+
+    def wrapLeftAndRight(self):
+        if not self.move(self.dX,0,self.speed):
+            if self.dX == -1:
+                self.X = settings.Screen.WIDTH - 5 - (self.rect.width / 2)
+            elif self.dX == 1:
+                self.X = 5 + (self.rect.width / 2)

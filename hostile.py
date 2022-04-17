@@ -17,15 +17,16 @@ class Hostile(element.Element):
         self.Colour = random.randint(0,7)
         super().setAnimationFrame(self.animation[self.Colour],True)
 
-        self.determineInitalPosition(HostileNo)
+        if HostileNo != 0:
+            self.determineInitalPosition(HostileNo)
 
         self.imDead = False
         self.myValue = 100
 
-        self.movementTimerReset = settings.FRAMES_PER_SECOND
+        self.movementTimerReset = settings.FRAMES_PER_SECOND / 4
         self.movementTimer = 0
         self.dX = 1
-        self.speed = 2
+        self.speed = 5
 
         self.prevdY = 0
         self.prevdX = 0
@@ -63,29 +64,6 @@ class Hostile(element.Element):
         self.movementTimer +=1
         if self.movementTimer >= self.movementTimerReset:
             self.movementTimer = 0
-
-    def wrapBottomToTop(self):
-        if not self.move(0,self.dY,self.speed) and self.dY == 1:
-            self.Y = 5 + self.rect.height / 2
-
-    def wrapLeftAndRight(self):
-        if not self.move(self.dX,0,self.speed):
-            if self.dX == -1:
-                self.X = settings.Screen.WIDTH - 5 - (self.rect.width / 2)
-            elif self.dX == 1:
-                self.X = 5 + (self.rect.width / 2)
-
-    def fallOffTheBottom(self):
-        if not self.move(0,self.dY,self.speed) and self.dY == 1:
-            self.imDead = True
-
-    def determineRandomDirection(self):
-        randNo = random.random()
-        if randNo > .66:
-            return 0    # Stood Still
-        elif randNo > .33:
-            return -1   # Up or Left
-        return 1        # Down or Right
 
     def determineAntiClockWiseChangeOfDirection(self):
         if self.dX == -1:
@@ -160,6 +138,12 @@ class Hostile(element.Element):
             self.dX = self.determineRandomDirection()
         self.dY = 1
 
+    def determineStartXDirection(self):
+        dX = 0
+        while dX == 0:
+            dX = self.determineRandomDirection()
+        return dX
+
     def targetPlayerAI(self, Player):
         if self.X > Player.X:
             self.dX = -1
@@ -183,6 +167,12 @@ class Hostile(element.Element):
 
     def fiftyPercentChance(self):
         if random.random() < 0.5:
+            return True
+        else:
+            return False
+
+    def fortyPercentChance(self):
+        if random.random() < 0.4:
             return True
         else:
             return False

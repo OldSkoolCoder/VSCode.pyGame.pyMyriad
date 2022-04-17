@@ -9,6 +9,9 @@ import boxes
 import explosion
 import point
 import reflectedBullet
+import buzzers
+import meteorite
+import asteroid
 
 class Game:
     def __init__(self):
@@ -19,8 +22,8 @@ class Game:
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
-        #self.fireMode = settings.Player.singleShot
-        self.fireMode = settings.Player.rapidFire
+        self.fireMode = settings.Player.singleShot
+        #self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
         self.bgY = 0
         self.bgRelY = 0
@@ -44,7 +47,7 @@ class Game:
 
     def new(self):
         self.level = 1
-        self.wave = 5
+        self.wave = 3
         self.powerUp = 0
 
         # Starts a new game
@@ -59,9 +62,33 @@ class Game:
         self.allSprites.add(self.Player)
 
         # Add Enemy Sprites
-        for i in range(self.level * 5):
-            #self.hostiles.add(floaters.Floater(self, i, self.wave))
-            self.hostiles.add(boxes.Box(self, i, self.wave))
+        for i in range(self.level * settings.Hostile.noPerLevel):
+            if self.wave == 1:
+                self.hostiles.add(floaters.Floater(self, i, self.wave))
+            elif self.wave == 2:
+                pass
+            elif self.wave == 3:
+                self.hostiles.add(buzzers.Buzzers(self, i, self.wave))
+            elif self.wave == 4:
+                self.hostiles.add(meteorite.Meteorite(self))
+            elif self.wave == 5:
+                self.hostiles.add(boxes.Box(self, i, self.wave))
+            elif self.wave == 6:
+                pass
+            elif self.wave == 7:
+                pass
+            elif self.wave == 8:
+                pass
+            elif self.wave == 9:
+                self.hostiles.add(asteroid.Asteroid(self))
+
+            if (self.wave != 4 or self.wave != 9):
+                if random.random() < .04:
+                    self.hostiles.add(meteorite.Meteorite(self))
+                else:
+                    if random.random() < .04:
+                        self.hostiles.add(asteroid.Asteroid(self))
+
 
         self.newLevel()
         self.run()

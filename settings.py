@@ -12,7 +12,6 @@ class PlayableArea:
     Bottom = Screen.HEIGHT
     LeftMost = 0
     RightMost = Screen.WIDTH
-
 class Player:
     respawnX = ((PlayableArea.RightMost - PlayableArea.LeftMost) / 2) + PlayableArea.LeftMost
     respawnY = PlayableArea.Bottom - 100
@@ -27,7 +26,8 @@ class Player:
     shieldActiveTimeWarningFPS = (shieldActiveTime - invincibleDuration) * FRAMES_PER_SECOND
 
 class Hostile:
-    maxHostilesPerRow = 8
+    maxHostilesPerRow = 10
+    noPerLevel = 20
 
 class Point:
     fontSize = 22
