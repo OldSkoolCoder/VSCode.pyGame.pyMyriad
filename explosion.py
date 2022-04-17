@@ -4,9 +4,7 @@ import element
 import random
 
 class Explosion(element.Element):
-
     def __init__(self,game,X,Y,explosionSet):
-
         set = 'Set' + "123"[random.randint(0,2)]
 
         super().__init__(game,X,Y,'')

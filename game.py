@@ -41,7 +41,7 @@ class Game:
 
     def new(self):
         self.level = 1
-        self.wave = 1
+        self.wave = 5
         self.powerUp = 0
 
         # Starts a new game
@@ -55,14 +55,9 @@ class Game:
         self.allSprites.add(self.Player)
 
         # Add Enemy Sprites
-        # spacing = (settings.Screen.WIDTH *.75) / (self.level * 5)
-        # for i in range(self.level * 5):
-        #     self.hostiles.add(floaters.Floater(self, 50+(i*spacing),50))
-
-        # Add any other sprites
-        spacing = (settings.Screen.WIDTH *.75) / (self.level * 5)
         for i in range(self.level * 5):
-            self.hostiles.add(boxes.Box(self, 50+(i*spacing),50))
+            self.hostiles.add(boxes.Box(self, i, self.wave))
+
         self.newLevel()
         self.run()
 
@@ -140,8 +135,8 @@ class Game:
             hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False)
             if hostilesHits:
                 for eachHostile in hostilesHits:
-                    if not eachHostile.shielded:
-                    #Add Explosion to Sprite Array
+                    if not eachHostile.reflective:
+                        #Add Explosion to Sprite Array
                         self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
                         eachHostile.imDead = True
                 

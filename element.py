@@ -76,3 +76,19 @@ class Element (pygame.sprite.Sprite):
         else:
             return True
 
+    def fallingOffRightHandSide(self,X):
+        width = self.rect.width
+
+        if ((X + width) > settings.PlayableArea.RightMost):
+            return True
+        else:
+            return False
+
+    def fallingOffLeftHandSide(self,X):
+        width = self.rect.width
+
+        if ((X - width) < settings.PlayableArea.LeftMost):
+            return True
+        else:
+            return False
+

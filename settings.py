@@ -26,6 +26,8 @@ class Player:
     shieldActiveTimeFPS = shieldActiveTime * FRAMES_PER_SECOND
     shieldActiveTimeWarningFPS = (shieldActiveTime - invincibleDuration) * FRAMES_PER_SECOND
 
+class Hostile:
+    maxHostilesPerRow = 8
     
 class Colours:
     # Define Colours
