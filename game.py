@@ -13,6 +13,7 @@ import buzzers
 import meteorite
 import asteroid
 import swoopers
+import fighters
 
 class Game:
     def __init__(self):
@@ -47,7 +48,7 @@ class Game:
 
     def new(self):
         self.level = 1
-        self.wave = 2
+        self.wave = 7
         self.powerUp = 0
 
         # Starts a new game
@@ -76,7 +77,7 @@ class Game:
             elif self.wave == 6:
                 pass
             elif self.wave == 7:
-                pass
+                self.hostiles.add(fighters.Fighter(self, i, self.wave))
             elif self.wave == 8:
                 pass
             elif self.wave == 9:
