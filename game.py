@@ -7,6 +7,8 @@ import bullet
 import floaters
 import boxes
 import explosion
+import point
+import reflectedBullet
 
 class Game:
     def __init__(self):
@@ -17,12 +19,12 @@ class Game:
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
-        self.fireMode = settings.Player.singleShot
-        #self.fireMode = settings.Player.rapidFire
+        #self.fireMode = settings.Player.singleShot
+        self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
         self.bgY = 0
         self.bgRelY = 0
-
+        self.showHitBoxes = False
 
         self.explosionSets = {}
         self.explosionSets['Set1'] = []
@@ -36,6 +38,7 @@ class Game:
         self.bullets = pygame.sprite.Group()
         self.hostiles = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
+        self.ordinance = pygame.sprite.Group()
         self.points = []
 
 
@@ -49,6 +52,7 @@ class Game:
 
         self.bullets.empty()
         self.hostiles.empty()
+        self.ordinance.empty()
 
         # Add Player Sprites
         self.Player = player.Player(self) 
@@ -56,6 +60,7 @@ class Game:
 
         # Add Enemy Sprites
         for i in range(self.level * 5):
+            #self.hostiles.add(floaters.Floater(self, i, self.wave))
             self.hostiles.add(boxes.Box(self, i, self.wave))
 
         self.newLevel()
@@ -80,9 +85,17 @@ class Game:
         self.bullets.update()
         self.Player.update()
         self.hostiles.update()
+        self.ordinance.update()
         self.explosions.update()
 
+
         self.bulletHitHostiles()
+
+        for eachPoint in self.points:
+            eachPoint.update()
+            if eachPoint.alpha == 0:
+                self.points.remove(eachPoint)
+
         self.removeDoneBullets()
         self.removeDeadHostiles()
         self.removeExplosions()
@@ -98,6 +111,10 @@ class Game:
                     self.playing = False
                 self.running = False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_h:
+                    self.showHitBoxes = not self.showHitBoxes
+
     def draw(self):
         # Game Loop draw screen
         # self.screen.fill(settings.Colours.BLACK)
@@ -112,7 +129,28 @@ class Game:
         self.allSprites.draw(self.screen)
         self.bullets.draw(self.screen)
         self.hostiles.draw(self.screen)
+        self.ordinance.draw(self.screen)
         self.explosions.draw(self.screen)
+
+        for eachPoint in self.points:
+            eachPoint.draw()
+
+        if self.showHitBoxes:
+            for sprite in self.hostiles:
+                pygame.draw.rect(self.screen, settings.Colours.RED, sprite.rect,1)
+                pygame.draw.circle(self.screen, settings.Colours.RED, sprite.rect.center, sprite.radius,1)
+
+            for ordinance in self.ordinance:
+                pygame.draw.rect(self.screen, settings.Colours.RED, ordinance.rect,1)
+                #pygame.draw.circle(self.screen, settings.Colours.RED, ordinance.rect.center, ordinance.radius,1)
+
+            for bullet in self.bullets:
+                pygame.draw.rect(self.screen, settings.Colours.BLUE, bullet.rect,1)
+                #pygame.draw.circle(self.screen, settings.Colours.RED, bullet.rect.center, bullet.radius,1)
+
+            pygame.draw.rect(self.screen, settings.Colours.BLUE, self.Player.rect,1)
+            pygame.draw.rect(self.screen, settings.Colours.BLUE, (self.Player.rect.center,(4,4)),0)
+            #pygame.draw.circle(self.screen, settings.Colours.BLUE, self.Player.rect.center, self.Player.radius,1)
 
         # After redrawing the screen, flip it
         pygame.display.flip()
@@ -132,16 +170,30 @@ class Game:
 
     def bulletHitHostiles(self):
         for eachBullet in self.bullets:
-            hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False)
+            #hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False) # Regular Square Hit Box
+            hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
             if hostilesHits:
                 for eachHostile in hostilesHits:
                     if not eachHostile.reflective:
                         #Add Explosion to Sprite Array
                         self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
                         eachHostile.imDead = True
+                        self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                    else:
+                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave))
                 
                 eachBullet.done = True
+
+            ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False) # Regular Square Hit Box
+            #ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+            if ordinanceHits:
+                for eachOrdinance in ordinanceHits:
+                    self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets))
+                    eachOrdinance.imDead = True
+                    #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
                 
+                eachBullet.done = True
+
     def removeDeadHostiles(self):
         for eachHostile in self.hostiles:
             if eachHostile.imDead:

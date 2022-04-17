@@ -59,6 +59,7 @@ class Element (pygame.sprite.Sprite):
     def setAnimationFrame(self,frameImage,useCentre):
         self.image = frameImage
         self.rect = self.image.get_rect()
+        self.radius = int(self.rect.height * .8 / 2)
 
         if useCentre:
             self.rect.centerx = self.X

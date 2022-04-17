@@ -28,6 +28,13 @@ class Player:
 
 class Hostile:
     maxHostilesPerRow = 8
+
+class Point:
+    fontSize = 22
+    onScreenDuration = 1
+    defaultAlpha = 255
+    alphaReduction = defaultAlpha // (onScreenDuration * FRAMES_PER_SECOND)
+    fontDir = "Assets/Fonts/"
     
 class Colours:
     # Define Colours
@@ -461,7 +468,7 @@ class Colours:
     PURPLE4 = (85, 26, 139)
     RASPBERRY = (135, 38, 87)
     RAWSIENNA = (199, 97, 20)
-    RED1 = (255, 0, 0)
+    RED = (255, 0, 0)
     RED2 = (238, 0, 0)
     RED3 = (205, 0, 0)
     RED4 = (139, 0, 0)

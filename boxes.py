@@ -23,8 +23,6 @@ class Box(hostile.Hostile):
 
         self.determineDiagonalStartDirection()
 
-        print(self.dX, self.dY)
-
     def update(self):
         self.wrapBottomToTop()   
         self.wrapLeftAndRight()         
@@ -32,26 +30,6 @@ class Box(hostile.Hostile):
         #self.X += self.dX
 
         if self.movementTimer == 0:
-            # rotate clockwise/anticlockwise logic here
-            # if self.fallingOffLeftHandSide(self.X): #Hit Left Hand Side
-            #     if self.fiftyPercentChance():
-            #         self.determineChangeOfDirection(self.dX, self.dY)
-                
-            #     if self.twentyTwoPercentChance():
-            #         self.determineChangeOfDirection(self.dX, self.dY)
-
-            # else: # Not Hit Left Hand Side
-            #     if self.fallingOffRightHandSide(self.X): #Hit Right Hand Side
-            #         if self.fiftyPercentChance():
-            #             self.determineChangeOfDirection(self.dX, self.dY)
-                    
-            #         if self.twentyTwoPercentChance():
-            #             self.determineChangeOfDirection(self.dX, self.dY)
-
-            #     else: # Not Hit Right Hand Side
-            #         if self.twentyTwoPercentChance():
-            #             self.determineChangeOfDirection(self.dX, self.dY)
-
             if self.fallingOffLeftHandSide(self.X): #Hit Left Hand Side
                 if self.fiftyPercentChance():
                     self.determineChangeOfDirection()
