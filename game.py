@@ -264,11 +264,11 @@ class Game:
             elif self.wave == 9:
                 self.hostiles.add(asteroid.Asteroid(self))
 
-            # if (self.wave != 4 or self.wave != 9):
-            #     if random.random() < .04:
-            #         self.hostiles.add(meteorite.Meteorite(self))
-            #     else:
-            #         if random.random() < .04:
-            #             self.hostiles.add(asteroid.Asteroid(self))
+            if (self.wave != 4 or self.wave != 9):
+                if random.random() < .04:
+                    self.hostiles.add(meteorite.Meteorite(self))
+                else:
+                    if random.random() < .04:
+                        self.hostiles.add(asteroid.Asteroid(self))
 
 
