@@ -47,7 +47,7 @@ class Game:
 
     def new(self):
         self.level = 1
-        self.wave = 1
+        self.wave = 2
         self.powerUp = 0
 
         # Starts a new game
