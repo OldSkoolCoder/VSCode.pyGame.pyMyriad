@@ -5,6 +5,7 @@ import settings
 import player
 import bullet
 import floaters
+import boxes
 import explosion
 
 class Game:
@@ -54,12 +55,14 @@ class Game:
         self.allSprites.add(self.Player)
 
         # Add Enemy Sprites
-        spacing = (settings.Screen.WIDTH *.75) / (self.level * 5)
-        for i in range(self.level * 5):
-            self.hostiles.add(floaters.Floater(self, 50+(i*spacing),50))
+        # spacing = (settings.Screen.WIDTH *.75) / (self.level * 5)
+        # for i in range(self.level * 5):
+        #     self.hostiles.add(floaters.Floater(self, 50+(i*spacing),50))
 
         # Add any other sprites
-
+        spacing = (settings.Screen.WIDTH *.75) / (self.level * 5)
+        for i in range(self.level * 5):
+            self.hostiles.add(boxes.Box(self, 50+(i*spacing),50))
         self.newLevel()
         self.run()
 
@@ -137,9 +140,10 @@ class Game:
             hostilesHits = pygame.sprite.spritecollide(eachBullet, self.hostiles, False)
             if hostilesHits:
                 for eachHostile in hostilesHits:
+                    if not eachHostile.shielded:
                     #Add Explosion to Sprite Array
-                    self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
-                    eachHostile.imDead = True
+                        self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                        eachHostile.imDead = True
                 
                 eachBullet.done = True
                 
