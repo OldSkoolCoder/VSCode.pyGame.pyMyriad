@@ -12,6 +12,7 @@ import reflectedBullet
 import buzzers
 import meteorite
 import asteroid
+import swoopers
 
 class Game:
     def __init__(self):
@@ -44,10 +45,9 @@ class Game:
         self.ordinance = pygame.sprite.Group()
         self.points = []
 
-
     def new(self):
         self.level = 1
-        self.wave = 3
+        self.wave = 1
         self.powerUp = 0
 
         # Starts a new game
@@ -66,7 +66,7 @@ class Game:
             if self.wave == 1:
                 self.hostiles.add(floaters.Floater(self, i, self.wave))
             elif self.wave == 2:
-                pass
+                self.hostiles.add(swoopers.Swooper(self, i, self.wave))
             elif self.wave == 3:
                 self.hostiles.add(buzzers.Buzzers(self, i, self.wave))
             elif self.wave == 4:
