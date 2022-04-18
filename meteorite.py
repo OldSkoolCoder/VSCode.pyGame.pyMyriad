@@ -14,7 +14,7 @@ class Meteorite(element.Element):
 
         self.hitBoxScaler = .5
         self.delaying = True
-        self.delayingTime = int((random.random() * 5) * settings.FRAMES_PER_SECOND)
+        self.delayingTime = int((random.random() * 2) * settings.FRAMES_PER_SECOND)
 
         # Required for Hostile Group
         self.imDead = False

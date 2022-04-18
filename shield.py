@@ -12,7 +12,7 @@ class Shield(element.Element):
         imgDir = 'Player/'
         super().__init__(game,X,Y-20,imgDir)
 
-        image = self.loadAnimationFrame('Shield', 0)
+        image = self.loadAnimationFrame('Shield', 0,0,0.5)
         self.animation.append(image)
 
         image = self.loadAnimationFrame('Blank', 0)
@@ -41,7 +41,7 @@ class Shield(element.Element):
                     self.currentFrameNo = self.frameShield
 
         self.X = self.game.Player.X
-        self.Y = self.game.Player.Y - 50
+        self.Y = self.game.Player.Y - 25
 
         self.setAnimationFrame(self.animation[self.currentFrameNo],True)
 

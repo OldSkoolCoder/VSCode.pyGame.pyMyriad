@@ -3,6 +3,7 @@ import settings
 import element
 import bullet
 import shield
+import explosion
 
 class Player(element.Element):
     def __init__(self,game):
@@ -26,6 +27,8 @@ class Player(element.Element):
         self.shieldSprite = shield.Shield(game,self.X,self.Y)
         self.game.allSprites.add(self.shieldSprite)
 
+        self.shipExplosion = None
+
         super().loadAnimationSeries('ShipFlames',self.noOfFrames * 2,0,.5)
         self.thrustedAnimationSet = self.animation.copy()
 
@@ -35,6 +38,9 @@ class Player(element.Element):
 
         self.animation.clear()
         super().setAnimationFrame(self.animationSet[0],True)
+
+        self.imageDir = 'Player/'
+        self.imageBlank = self.loadAnimationFrame('Blank', 0)
 
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / self.noOfFrames
 
@@ -97,11 +103,14 @@ class Player(element.Element):
         if self.haveWeFired:
             frameNo += 4
 
-        #if (int(self.tickCounter // self.ticksPerFrame) == self.tickCounter / self.ticksPerFrame):
-        if self.thrustActive:
-            super().setAnimationFrame(self.thrustedAnimationSet[frameNo],True)
+        if self.alive:
+            #if (int(self.tickCounter // self.ticksPerFrame) == self.tickCounter / self.ticksPerFrame):
+            if self.thrustActive:
+                super().setAnimationFrame(self.thrustedAnimationSet[frameNo],True)
+            else:
+                super().setAnimationFrame(self.animationSet[frameNo],True)
         else:
-            super().setAnimationFrame(self.animationSet[frameNo],True)
+            super().setAnimationFrame(self.imageBlank,True)
 
     def shootLaser(self):
         if self.game.fireMode == settings.Player.rapidFire:
@@ -125,3 +134,17 @@ class Player(element.Element):
     def activateShield(self):
         self.invincible = True
         self.shieldSprite.activateShield()
+
+    def whoopsImDead(self):
+        self.alive = False
+        self.shipExplosion = explosion.Explosion(self, self.X, self.Y,self.game.explosionSets,2)
+        self.game.allSprites.add(self.shipExplosion)
+
+    def iAmAlive(self):
+        self.X = settings.Player.respawnX
+        self.Y = settings.Player.respawnY
+        self.dX = 0
+        self.dy = 0
+        
+        self.alive = True
+        self.activateShield()

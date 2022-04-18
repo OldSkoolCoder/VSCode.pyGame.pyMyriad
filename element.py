@@ -25,6 +25,7 @@ class Element (pygame.sprite.Sprite):
         self.rect = None
 
         self.alive = True
+        self.hitValue = 1
 
         self.animation = []
 
@@ -115,7 +116,7 @@ class Element (pygame.sprite.Sprite):
 
     def wrapLeftAndRight(self):
         if not self.move(self.dX,0,self.speed):
-            if self.dX == -1:
+            if self.dX < 0:
                 self.X = settings.Screen.WIDTH - 5 - (self.rect.width / 2)
-            elif self.dX == 1:
+            elif self.dX > 0:
                 self.X = 5 + (self.rect.width / 2)

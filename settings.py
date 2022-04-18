@@ -18,6 +18,7 @@ class Player:
     reloadTime = .025 * FRAMES_PER_SECOND       # Halfed the time to get alternating bullets (garymeg)
     singleShot = 1
     rapidFire = 2
+    imIronMan = True
 
     invincibleDuration = 3
     invincibleDurationFPS = invincibleDuration * FRAMES_PER_SECOND

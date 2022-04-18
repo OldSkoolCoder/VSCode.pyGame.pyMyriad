@@ -16,6 +16,7 @@ import swoopers
 import fighters
 import text
 import miner
+import pod
 
 class Game:
     def __init__(self):
@@ -26,8 +27,8 @@ class Game:
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
-        #self.fireMode = settings.Player.singleShot
-        self.fireMode = settings.Player.rapidFire
+        self.fireMode = settings.Player.singleShot
+        #self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
         self.bgY = 0
         self.bgRelY = 0
@@ -66,7 +67,6 @@ class Game:
 
         # Add Enemy Sprites
 
-        self.newLevel()
         self.run()
 
     def newLevel(self):
@@ -78,11 +78,10 @@ class Game:
         self.playing = True
         while self.playing:
             self.clock.tick(settings.FRAMES_PER_SECOND)
-            if len(self.hostiles) <= self.level + 1:
+            if len(self.hostiles) + len(self.ordinance) <= self.level + 1:
                 self.addNextWaveLevelOfAliens()
                 self.newLevel()
 
-            print(len(self.hostiles))
             self.events()
             self.update()
             self.draw()
@@ -96,8 +95,22 @@ class Game:
         self.ordinance.update()
         self.explosions.update()
 
-
         self.bulletHitHostiles()
+
+        if self.Player.invincible:
+            self.shieldHitHostiles()
+        else:
+            if self.Player.alive:
+                self.shipHitHostiles()
+
+        if not self.Player.alive:
+            if not self.Player.shipExplosion.imDone:
+                self.Player.shipExplosion.update()
+            else:
+                self.allSprites.remove(self.Player.shipExplosion)
+                self.Player.iAmAlive()
+                #self.playing = False
+
 
         for eachPoint in self.points:
             eachPoint.update()
@@ -159,7 +172,11 @@ class Game:
 
             pygame.draw.rect(self.screen, settings.Colours.BLUE, self.Player.rect,1)
             pygame.draw.rect(self.screen, settings.Colours.BLUE, (self.Player.rect.center,(4,4)),0)
-            #pygame.draw.circle(self.screen, settings.Colours.BLUE, self.Player.rect.center, self.Player.radius,1)
+            pygame.draw.circle(self.screen, settings.Colours.BLUE, self.Player.rect.center, self.Player.radius,1)
+
+            pygame.draw.rect(self.screen, settings.Colours.BLUE, self.Player.shieldSprite.rect,1)
+            pygame.draw.rect(self.screen, settings.Colours.BLUE, (self.Player.shieldSprite.rect.center,(4,4)),0)
+            pygame.draw.circle(self.screen, settings.Colours.BLUE, self.Player.shieldSprite.rect.center, self.Player.radius,1)
 
         # After redrawing the screen, flip it
         pygame.display.flip()
@@ -183,9 +200,11 @@ class Game:
             #ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False, pygame.sprite.collide_circle) # Using Circle Hit Box
             if ordinanceHits:
                 for eachOrdinance in ordinanceHits:
-                    self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets))
-                    eachOrdinance.imDead = True
-                    #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                    eachOrdinance.hitValue -= 1
+                    if eachOrdinance.hitValue == 0:
+                        self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets,0))
+                        eachOrdinance.imDead = True
+                        #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
                 
                 eachBullet.done = True
 
@@ -260,7 +279,9 @@ class Game:
             elif self.wave == 7:
                 self.hostiles.add(fighters.Fighter(self, i, self.wave))
             elif self.wave == 8:
-                pass
+                if i < self.level:
+                    self.hostiles.add(pod.Pod(self, i, self.wave))
+                    self.hostiles.add(pod.Pod(self, i, self.wave))
             elif self.wave == 9:
                 self.hostiles.add(asteroid.Asteroid(self))
 
@@ -271,4 +292,43 @@ class Game:
                     if random.random() < .04:
                         self.hostiles.add(asteroid.Asteroid(self))
 
+    def shieldHitHostiles(self):
+        ordinanceHits = pygame.sprite.spritecollide(self.Player.shieldSprite, self.ordinance, False) # Regular Square Hit Box
+        #ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+        if ordinanceHits:
+            for eachOrdinance in ordinanceHits:
+                self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets,0))
+                eachOrdinance.imDead = True
+                #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
 
+        hostilesHits = pygame.sprite.spritecollide(self.Player.shieldSprite, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+        if hostilesHits:
+            for eachHostile in hostilesHits:
+                self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                eachHostile.imDead = True
+                self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+
+        self.shipHitHostiles()
+
+
+    def shipHitHostiles(self):
+        if not settings.Player.imIronMan:
+            ordinanceHits = pygame.sprite.spritecollide(self.Player, self.ordinance, False) # Regular Square Hit Box
+            if ordinanceHits:
+                if not self.Player.invincible:
+                    self.Player.whoopsImDead()
+                
+                for eachOrdinance in ordinanceHits:
+                    self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets,0))
+                    eachOrdinance.imDead = True
+                    #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+
+            hostilesHits = pygame.sprite.spritecollide(self.Player, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+            if hostilesHits:
+                if not self.Player.invincible:
+                    self.Player.whoopsImDead()
+
+                for eachHostile in hostilesHits:
+                    self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                    eachHostile.imDead = True
+                    self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
