@@ -139,7 +139,7 @@ class Player(element.Element):
 
     def whoopsImDead(self):
         self.alive = False
-        self.shipExplosion = explosion.Explosion(self, self.X, self.Y,self.game.explosionSets,2)
+        self.shipExplosion = explosion.Explosion(self.game, self.X, self.Y,2)
         self.game.allSprites.add(self.shipExplosion)
 
     def iAmAlive(self):

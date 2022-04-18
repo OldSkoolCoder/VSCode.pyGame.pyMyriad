@@ -12,7 +12,8 @@ class Hostile(element.Element):
         super().__init__(game, 0, 0, imgDir)
 
         self.noOfFrames = 8
-        super().loadAnimationSeries(f'Alien{sWave}-',self.noOfFrames,0,Scale)
+        #super().loadAnimationSeries(f'Alien{sWave}-',self.noOfFrames,0,Scale)
+        self.animation = self.game.assets.animationsSets['Alien'][f'Wave{sWave}'].copy()
 
         self.Colour = random.randint(0,7)
         super().setAnimationFrame(self.animation[self.Colour],True)

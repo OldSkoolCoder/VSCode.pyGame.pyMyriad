@@ -23,7 +23,8 @@ class Meteorite(element.Element):
 
         self.noOfFrames = 16
 
-        super().loadAnimationSeries(f'Meteorite{meteorSet}-',self.noOfFrames)
+        #super().loadAnimationSeries(f'Meteorite{meteorSet}-',self.noOfFrames)
+        self.animation = self.game.assets.animationsSets['Meteorite'][f'Set{meteorSet}'].copy()
 
         super().setAnimationFrame(self.animation[0],True,self.hitBoxScaler)
 

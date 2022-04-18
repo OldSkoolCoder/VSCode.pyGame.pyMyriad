@@ -4,7 +4,7 @@ import element
 import random
 
 class Explosion(element.Element):
-    def __init__(self,game,X,Y,explosionAnimationSet,explosionSet=-1):
+    def __init__(self,game,X,Y,explosionSet=-1):
         if explosionSet == -1:
             set = 'Set' + "123"[random.randint(0,2)]
         else:
@@ -14,7 +14,8 @@ class Explosion(element.Element):
         super().__init__(game,X,Y,'')
 
         self.noOfFrames = 62
-        self.animation = explosionAnimationSet[set].copy()
+        #self.animation = explosionAnimationSet[set].copy()
+        self.animation = self.game.assets.animationsSets['Explosion'][f'{set}'].copy()
 
         super().setAnimationFrame(self.animation[0],True)
 

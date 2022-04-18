@@ -23,7 +23,8 @@ class Asteroid(element.Element):
 
         self.noOfFrames = 16
 
-        super().loadAnimationSeries(f'Asteroid{asteroidSet}-',self.noOfFrames,0,.5)
+        #super().loadAnimationSeries(f'Asteroid{asteroidSet}-',self.noOfFrames,0,.5)
+        self.animation = self.game.assets.animationsSets['Asteroid'][f'Set{asteroidSet}'].copy()
 
         super().setAnimationFrame(self.animation[0],True,self.hitBoxScaler)
 

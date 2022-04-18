@@ -4,7 +4,7 @@ import settings
 import game
 #import sprites 
 
-g = game.Game()
+g  = game.Game()
 g.showStartScreen()
 while g.running:
     g.new()

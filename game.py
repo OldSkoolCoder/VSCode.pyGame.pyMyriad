@@ -19,6 +19,7 @@ import miner
 import soundFX
 import playerLife
 import pod
+import assets
 
 class Game:
     def __init__(self):
@@ -28,6 +29,10 @@ class Game:
         pygame.mixer.set_num_channels(32)
         self.screen = pygame.display.set_mode((settings.Screen.WIDTH, settings.Screen.HEIGHT))
         pygame.display.set_caption(settings.TITLE)
+        self.soundFx = soundFX.SoundFX()
+        self.soundFx.playSound('readySetGo')
+        self.assets = assets.Assets()
+
         self.clock = pygame.time.Clock()
         self.running = True
         self.fireMode = settings.Player.singleShot
@@ -36,8 +41,6 @@ class Game:
         self.bgY = 0
         self.bgRelY = 0
         self.showHitBoxes = False
-
-        self.soundFx = soundFX.SoundFX()
 
         self.explosionSets = {}
         self.explosionSets['Set1'] = []
@@ -216,7 +219,7 @@ class Game:
                 for eachOrdinance in ordinanceHits:
                     eachOrdinance.hitValue -= 1
                     if eachOrdinance.hitValue == 0:
-                        self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets,0))
+                        self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,0))
                         eachOrdinance.imDead = True
                         self.soundFx.playSound('explosion4')
                         #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
@@ -229,7 +232,7 @@ class Game:
                 for eachHostile in hostilesHits:
                     if not eachHostile.reflective:
                         #Add Explosion to Sprite Array
-                        self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                        self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
                         eachHostile.imDead = True
                         self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
                         self.hostiles.remove(eachHostile)
@@ -314,14 +317,14 @@ class Game:
         #ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False, pygame.sprite.collide_circle) # Using Circle Hit Box
         if ordinanceHits:
             for eachOrdinance in ordinanceHits:
-                self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets,0))
+                self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,0))
                 eachOrdinance.imDead = True
                 #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
 
         hostilesHits = pygame.sprite.spritecollide(self.Player.shieldSprite, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
         if hostilesHits:
             for eachHostile in hostilesHits:
-                self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
                 eachHostile.imDead = True
                 self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
 
@@ -336,7 +339,7 @@ class Game:
                     self.Player.whoopsImDead()
                 
                 for eachOrdinance in ordinanceHits:
-                    self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,self.explosionSets,0))
+                    self.explosions.add(explosion.Explosion(self, eachOrdinance.X, eachOrdinance.Y,0))
                     eachOrdinance.imDead = True
                     #self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
 
@@ -346,7 +349,7 @@ class Game:
                     self.Player.whoopsImDead()
 
                 for eachHostile in hostilesHits:
-                    self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                    self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
                     eachHostile.imDead = True
                     self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
 

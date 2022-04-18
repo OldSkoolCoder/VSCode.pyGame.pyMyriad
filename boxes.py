@@ -11,7 +11,8 @@ class Box(hostile.Hostile):
         self.animationSet = self.animation.copy()
         
         self.animation.clear()
-        super().loadAnimationSeries('Alien15-',self.noOfFrames,0,0.4)
+        #super().loadAnimationSeries('Alien15-',self.noOfFrames,0,0.4)
+        self.animation = self.game.assets.animationsSets['Alien']['Wave05b'].copy()
         self.animationSetShielded = self.animation.copy()
         self.animation.clear()
 
