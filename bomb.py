@@ -10,6 +10,7 @@ class Bomb(element.Element):
         super().__init__(game,x,y,imgDir)
 
         self.imDead = False
+        self.game.soundFx.playSound('laser6')
 
         self.noOfFrames = 8
         super().loadAnimationSeries(f'BombN-',self.noOfFrames,0,.5)

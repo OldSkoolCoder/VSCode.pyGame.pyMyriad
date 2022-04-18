@@ -12,6 +12,7 @@ class Bullet(element.Element):
         super().__init__(game,x,y,imgDir)
 
         self.done = False
+        self.game.soundFx.playSound('bullet')
 
         image = super().loadAnimationFrame(f'Laser{bulletSet}',wave - 1, 90, 0.25)
         #image1 = pygame.transform.rotozoom(image,90,.25)
@@ -27,7 +28,6 @@ class Bullet(element.Element):
         self.speed = 24
 
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / 4
-        
 
     def update(self):
         super().move(0,-1,self.speed-1,False)

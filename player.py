@@ -60,7 +60,9 @@ class Player(element.Element):
         if keys[pygame.K_UP]:
             self.thrustActive = True
             self.dY = -1
+            self.game.soundFx.playSoundContinuously('thrust')
         else:
+            self.game.soundFx.stopSound('thrust')
             self.thrustActive = False
 
         if keys[pygame.K_1]:
