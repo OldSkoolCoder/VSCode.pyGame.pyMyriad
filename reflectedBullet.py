@@ -4,9 +4,9 @@ import element
 import random
 
 class ReflectedBullet(element.Element):
-    def __init__(self,game,x,y,wave):
+    def __init__(self,game,x,y,wave, bulletType):
 
-        bulletSet = "CEG"[game.powerUp]
+        bulletSet = "CEGF"[bulletType]
 
         imgDir = 'Lasers/Set' + bulletSet
         super().__init__(game,x,y,imgDir)

@@ -200,7 +200,7 @@ class Game:
                         self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
                         self.hostiles.remove(eachHostile)
                     else:
-                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave))
+                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave, self.powerUp))
                 
                 eachBullet.done = True
 
