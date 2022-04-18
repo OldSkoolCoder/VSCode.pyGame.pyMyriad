@@ -48,7 +48,7 @@ class Pod(hostile.Hostile):
             self.dY = self.dY / self.speedDivisor
 
             if self.twentyTwoPercentChance():
-                self.game.ordinance.add(plasmaBall.PlasmaBall(self, self.X, self.Y))  # 7 since we dont know our own wave(doesnt really matter)  bullet type 3 (F)
+                self.game.ordinance.add(plasmaBall.PlasmaBall(self.game, self.X, self.Y))  # 7 since we dont know our own wave(doesnt really matter)  bullet type 3 (F)
 
             if self.twentyTwoPercentChance():
                 randNo = random.random()

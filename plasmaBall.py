@@ -10,6 +10,7 @@ class PlasmaBall(element.Element):
         super().__init__(game,x,y,imgDir)
 
         self.imDead = False
+        self.game.soundFx.playSound('laser3')
 
         image = super().loadAnimationFrame(f'LaserA',random.randint(0,9), 270, 1)
         self.animation.append(image)
@@ -39,7 +40,7 @@ class PlasmaBall(element.Element):
 
         super().setAnimationFrame(self.animation[frameNo],True)
 
-        if self.Y > settings.Screen.HEIGHT + self.rect.height:
+        if self.Y > settings.PlayableArea.Bottom + self.rect.height:
             self.imDead = True
         else:
             self.rect.centerx = self.X

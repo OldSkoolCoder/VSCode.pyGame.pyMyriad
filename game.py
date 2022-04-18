@@ -25,6 +25,7 @@ class Game:
         # Initialise game code
         pygame.init()
         pygame.mixer.init()
+        pygame.mixer.set_num_channels(32)
         self.screen = pygame.display.set_mode((settings.Screen.WIDTH, settings.Screen.HEIGHT))
         pygame.display.set_caption(settings.TITLE)
         self.clock = pygame.time.Clock()
@@ -51,6 +52,7 @@ class Game:
         self.hostiles = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
         self.ordinance = pygame.sprite.Group()
+        self.playerLifes = pygame.sprite.Group()
         self.points = []
         self.noOfLives = 0
 
@@ -66,6 +68,7 @@ class Game:
         self.bullets.empty()
         self.hostiles.empty()
         self.ordinance.empty()
+        self.playerLifes.empty()
 
         # Add Player Sprites
         self.Player = player.Player(self) 
@@ -74,6 +77,7 @@ class Game:
         # Add Enemy Sprites
 
         self.setUpLivesRemaining()
+        pygame.mixer.music.play(-1)
         self.run()
 
     def newLevel(self):
@@ -101,6 +105,7 @@ class Game:
         self.hostiles.update()
         self.ordinance.update()
         self.explosions.update()
+        self.playerLifes.update()
 
         self.bulletHitHostiles()
 
@@ -113,6 +118,7 @@ class Game:
         if not self.Player.alive:
             if not self.Player.shipExplosion.imDone:
                 self.Player.shipExplosion.update()
+                self.removeLife()
             else:
                 self.allSprites.remove(self.Player.shipExplosion)
                 self.Player.iAmAlive()
@@ -160,6 +166,7 @@ class Game:
         self.hostiles.draw(self.screen)
         self.ordinance.draw(self.screen)
         self.explosions.draw(self.screen)
+        self.playerLifes.draw(self.screen)
 
         for eachPoint in self.points:
             eachPoint.draw()
@@ -268,9 +275,10 @@ class Game:
             self.level +=1
             self.wave = 1
 
-        WaveTitle = f'Get Ready - Entering Wave {self.wave}'
+        WaveTitle = f'Get Ready-Entering Round {self.wave}'
         textWaveTitle = text.Text(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, WaveTitle, 'Vinegar Stroke',50)
         self.points.append(textWaveTitle)
+        self.soundFx.playSound(f'round{self.wave}')
 
         for i in range(self.level * settings.Hostile.noPerLevel):
             if self.wave == 1:
@@ -344,5 +352,13 @@ class Game:
 
     def setUpLivesRemaining(self):
         for lives in range(1,self.noOfLives+1):
-            life = playerLife.PlayerLife(self, lives*40, 40)
-            self.allSprites.add(life)
+            life = playerLife.PlayerLife(self, lives*25, settings.Screen.HEIGHT - 20)
+            self.playerLifes.add(life)
+
+    def addLife(self):
+        life = playerLife.PlayerLife(self, (self.noOfLives+1)*35, 40)
+        self.playerLifes.add(life)
+
+    def removeLife(self):
+        life = self.playerLifes(self.noOfLives)
+        self.playerLifes.remove(life)

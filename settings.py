@@ -9,7 +9,7 @@ class Screen:
 
 class PlayableArea:
     Top = 0
-    Bottom = Screen.HEIGHT
+    Bottom = Screen.HEIGHT - 50
     LeftMost = 0
     RightMost = Screen.WIDTH
 class Player:

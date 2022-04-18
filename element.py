@@ -117,6 +117,6 @@ class Element (pygame.sprite.Sprite):
     def wrapLeftAndRight(self):
         if not self.move(self.dX,0,self.speed):
             if self.dX < 0:
-                self.X = settings.Screen.WIDTH - 5 - (self.rect.width / 2)
+                self.X = settings.PlayableArea.RightMost - 5 - (self.rect.width / 2)
             elif self.dX > 0:
                 self.X = 5 + (self.rect.width / 2)

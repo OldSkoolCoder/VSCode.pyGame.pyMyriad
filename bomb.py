@@ -36,7 +36,7 @@ class Bomb(element.Element):
 
         #super().setAnimationFrame(self.animation[frameNo],True)
 
-        if self.Y > settings.Screen.HEIGHT + self.rect.height:
+        if self.Y > settings.PlayableArea.Bottom + self.rect.height:
             self.imDead = True
         else:
             self.rect.centerx = self.X

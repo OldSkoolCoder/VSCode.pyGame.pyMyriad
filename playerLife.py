@@ -20,7 +20,7 @@ class PlayerLife(element.Element):
         self.bulletSide = 1 # Variable to hold side ship fires from (Garymeg)
         self.invincible = False # Shield Flag
 
-        super().loadAnimationSeries('Ship',self.noOfFrames * 2,0,.35)
+        super().loadAnimationSeries('Ship',self.noOfFrames * 2,0,.25)
         super().setAnimationFrame(self.animation[0],True)
 
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / self.noOfFrames

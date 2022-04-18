@@ -12,6 +12,7 @@ class ReflectedBullet(element.Element):
         super().__init__(game,x,y,imgDir)
 
         self.imDead = False
+        self.game.soundFx.playSound('laser9')
 
         image = super().loadAnimationFrame(f'Laser{bulletSet}',wave - 1, 270, 0.25)
         self.animation.append(image)

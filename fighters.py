@@ -24,7 +24,7 @@ class Fighter(hostile.Hostile):
             self.Colour = random.randint(0,7)
             if self.fourPercentChance():
                 #self.game.ordinance.add(bomb.Bomb(self.game, self.X, self.Y + self.rect.height/2))
-                self.game.ordinance.add(reflectedBullet.ReflectedBullet(self, self.X, self.Y, 7, 3))  # 7 since we dont know our own wave(doesnt really matter)  bullet type 3 (F)
+                self.game.ordinance.add(reflectedBullet.ReflectedBullet(self.game, self.X, self.Y, 7, 3))  # 7 since we dont know our own wave(doesnt really matter)  bullet type 3 (F)
 
 
 

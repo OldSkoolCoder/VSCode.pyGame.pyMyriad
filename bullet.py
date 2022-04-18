@@ -42,7 +42,7 @@ class Bullet(element.Element):
 
         super().setAnimationFrame(self.animation[frameNo],True)
 
-        if self.Y < -self.rect.height:
+        if self.Y < settings.PlayableArea.Top - self.rect.height:
             self.done = True
         else:
             self.rect.centerx = self.X
