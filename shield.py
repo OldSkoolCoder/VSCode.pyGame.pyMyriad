@@ -33,6 +33,7 @@ class Shield(element.Element):
                 self.invincibleTimer = 0
                 self.currentFrameNo = self.frameBlank
                 self.game.Player.invincible = False
+                self.game.removeShields()
                 self.game.soundFx.stopSound('shield4')
 
             elif self.invincibleTimer >= settings.Player.shieldActiveTimeWarningFPS:

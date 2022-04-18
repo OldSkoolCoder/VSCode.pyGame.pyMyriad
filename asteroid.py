@@ -12,7 +12,7 @@ class Asteroid(element.Element):
         asteroidSet = "ABCDEFG"[random.randint(0,6)]
         self.rotation = random.randint(0,1)
 
-        self.hitBoxScaler = .5
+        self.hitBoxScaler = .6
         self.delaying = True
         self.delayingTime = int((random.random() * 2) * settings.FRAMES_PER_SECOND)
 

@@ -89,7 +89,8 @@ class Player(element.Element):
                 self.haveWeFired = False
 
         if keys[pygame.K_RETURN]:
-            self.activateShield()
+            if self.game.noOfShields > 0:
+                self.activateShield()
 
     def update(self):
         super().move(self.dX,0,self.speed-abs(self.dX))
@@ -149,4 +150,5 @@ class Player(element.Element):
         self.dy = 0
         
         self.alive = True
+        self.game.noOfShields +=1
         self.activateShield()

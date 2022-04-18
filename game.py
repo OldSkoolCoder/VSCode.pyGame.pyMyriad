@@ -18,6 +18,7 @@ import text
 import miner
 import soundFX
 import playerLife
+import shieldIndicator
 import pod
 import assets
 
@@ -56,14 +57,17 @@ class Game:
         self.explosions = pygame.sprite.Group()
         self.ordinance = pygame.sprite.Group()
         self.playerLifes = pygame.sprite.Group()
+        self.shieldIndicators = pygame.sprite.Group()
         self.points = []
         self.noOfLives = 0
+        self.noOfShields = 0
 
     def new(self):
         self.level = 1
         self.wave = 0
         self.powerUp = 0
         self.noOfLives = 4
+        self.noOfShields = 3
 
         # Starts a new game
         self.allSprites = pygame.sprite.Group()
@@ -72,6 +76,7 @@ class Game:
         self.hostiles.empty()
         self.ordinance.empty()
         self.playerLifes.empty()
+        self.shieldIndicators.empty()
 
         # Add Player Sprites
         self.Player = player.Player(self) 
@@ -80,6 +85,7 @@ class Game:
         # Add Enemy Sprites
 
         self.setUpLivesRemaining()
+        self.setUpShieldsRemaining()
         pygame.mixer.music.play(-1)
         self.run()
 
@@ -109,6 +115,7 @@ class Game:
         self.ordinance.update()
         self.explosions.update()
         self.playerLifes.update()
+        self.shieldIndicators.update()
 
         self.bulletHitHostiles()
 
@@ -121,8 +128,8 @@ class Game:
         if not self.Player.alive:
             if not self.Player.shipExplosion.imDone:
                 self.Player.shipExplosion.update()
-                self.removeLife()
             else:
+                self.removeLife()
                 self.allSprites.remove(self.Player.shipExplosion)
                 self.Player.iAmAlive()
                 #self.playing = False
@@ -170,6 +177,7 @@ class Game:
         self.ordinance.draw(self.screen)
         self.explosions.draw(self.screen)
         self.playerLifes.draw(self.screen)
+        self.shieldIndicators.draw(self.screen)
 
         for eachPoint in self.points:
             eachPoint.draw()
@@ -359,9 +367,26 @@ class Game:
             self.playerLifes.add(life)
 
     def addLife(self):
-        life = playerLife.PlayerLife(self, (self.noOfLives+1)*35, 40)
-        self.playerLifes.add(life)
+        self.noOfLives +=1
+        self.playerLifes.empty()
+        self.setUpLivesRemaining()
 
     def removeLife(self):
-        life = self.playerLifes(self.noOfLives)
-        self.playerLifes.remove(life)
+        self.noOfLives -=1
+        self.playerLifes.empty()
+        self.setUpLivesRemaining()
+
+    def setUpShieldsRemaining(self):
+        for i in range(1,self.noOfShields+1):
+            shield = shieldIndicator.ShieldIndicator(self, settings.Screen.WIDTH - (i*25), settings.Screen.HEIGHT)
+            self.shieldIndicators.add(shield)
+
+    def removeShields(self):
+        self.noOfShields -=1
+        self.shieldIndicators.empty()
+        self.setUpShieldsRemaining()
+
+    def addShields(self):
+        self.noOfShields +=1
+        self.shieldIndicators.empty()
+        self.setUpShieldsRemaining()
