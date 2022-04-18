@@ -48,7 +48,7 @@ class Game:
 
     def new(self):
         self.level = 1
-        self.wave = 7
+        self.wave = 2
         self.powerUp = 0
 
         # Starts a new game
@@ -119,6 +119,9 @@ class Game:
 
         self.bulletHitHostiles()
 
+        if self.Player.invincible:
+            self.shieldHitHostiles()
+
         for eachPoint in self.points:
             eachPoint.update()
             if eachPoint.alpha == 0:
@@ -178,7 +181,7 @@ class Game:
 
             pygame.draw.rect(self.screen, settings.Colours.BLUE, self.Player.rect,1)
             pygame.draw.rect(self.screen, settings.Colours.BLUE, (self.Player.rect.center,(4,4)),0)
-            #pygame.draw.circle(self.screen, settings.Colours.BLUE, self.Player.rect.center, self.Player.radius,1)
+            pygame.draw.circle(self.screen, settings.Colours.BLUE, self.Player.rect.center, self.Player.radius,1)
 
         # After redrawing the screen, flip it
         pygame.display.flip()
@@ -245,3 +248,11 @@ class Game:
     def loadAnimationSeries(self, imageDir, imageName, NoOfFrames, animationSet, angle=0,zoom=1):
         for frameNo in range(NoOfFrames):    # NoOfFrames = 10 = 0 -> 9
             animationSet.append(self.loadAnimationFrame(imageDir,imageName,frameNo,angle,zoom))
+
+    def shieldHitHostiles(self):
+        hostilesHits = pygame.sprite.spritecollide(self.Player, self.hostiles, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+        if hostilesHits:
+            for eachHostile in hostilesHits:
+                self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y,self.explosionSets))
+                eachHostile.imDead = True
+                self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
