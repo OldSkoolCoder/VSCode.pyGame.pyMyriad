@@ -6,7 +6,7 @@ import random
 
 class Hostile(element.Element):
 
-    def __init__(self,game,HostileNo,Wave,Scale=0.5):
+    def __init__(self,game,HostileNo,Wave,myValue=100,Scale=0.5,myHitValue=1):
         sWave = format(str(Wave).rjust(2,'0'))
         imgDir = f'Aliens/SpaceShips/Wave{sWave}'
         super().__init__(game, 0, 0, imgDir)
@@ -21,7 +21,7 @@ class Hostile(element.Element):
         self.determineInitalPosition(HostileNo)
 
         self.imDead = False
-        self.myValue = 100
+        self.myValue = myValue * game.gameMultiplier
 
         self.movementTimerReset = settings.FRAMES_PER_SECOND / 4
         self.movementTimer = 0
@@ -30,6 +30,7 @@ class Hostile(element.Element):
 
         self.prevdY = 0
         self.prevdX = 0
+        self.hitValue = myHitValue * game.gameMultiplier
 
         self.reflective = False
 

@@ -8,10 +8,10 @@ import random
 class Miner(hostile.Hostile):
 
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave, 0.4)
+        super().__init__(game,HostileNo,Wave,300,.4,2)
         self.animationSet = self.animation.copy()
         
-        self.myValue = 300
+        #self.myValue = 300
         self.reflective = False
 
         self.speed = 5

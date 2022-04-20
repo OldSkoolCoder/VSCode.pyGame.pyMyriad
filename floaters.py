@@ -7,7 +7,7 @@ import random
 
 class Floater(hostile.Hostile):
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave,0.3)
+        super().__init__(game,HostileNo,Wave,Scale=.3)
 
         self.movementTimer = 1
 

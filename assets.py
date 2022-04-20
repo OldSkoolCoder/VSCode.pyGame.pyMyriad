@@ -46,6 +46,9 @@ class Assets():
         self.animationsSets['Alien']['Wave15'] = self.loadAnimationSeries('Aliens/SpaceShips/Wave05', 'Alien15-',8,0,.3)
         #self.animationsSets['Alien']['Wave18'] = self.loadAnimationSeries('Aliens/SpaceShips/Wave8', 'Alien18-',8,0,.4)
 
+        self.animationsSets['Planets'] = self.loadAnimationSeries('BackDrops/Planets', 'Planet-',18,270)
+
+
     def loadAnimationFrame(self, imgDir, imageName, frameNo, angle=0,zoom=1):
         frameNumber = format(str(frameNo).rjust(3,'0'))
         # 'Assets/Asteroids/seta001.png'

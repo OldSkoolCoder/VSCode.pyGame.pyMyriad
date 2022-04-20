@@ -8,9 +8,9 @@ import reflectedBullet
 
 class Fighter(hostile.Hostile):
     def __init__(self,game,HostileNo,Wave):     #fix image tomorrow after john has stolen waves 6 and or 7 for pods (probably use what is currently #9)
-        super().__init__(game,HostileNo,Wave,0.3)
+        super().__init__(game,HostileNo,Wave,350,.3,2)
 
-        self.myValue = 350
+        #self.myValue = 350
         self.dY = 0
         self.dX = self.determineRandomDirection()
         self.speed = 5

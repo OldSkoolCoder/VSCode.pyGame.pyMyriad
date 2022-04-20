@@ -7,10 +7,10 @@ import random
 
 class Swooper(hostile.Hostile):
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave,0.3)
+        super().__init__(game,HostileNo,Wave,150,.3,2)
 
-        self.movementTimerReset = settings.FRAMES_PER_SECOND /2
-        self.myValue = 150
+        self.movementTimerReset = settings.FRAMES_PER_SECOND / 4
+        #self.myValue = 150
 
         self.dY = 1
         self.dX = self.determineRandomDirection()

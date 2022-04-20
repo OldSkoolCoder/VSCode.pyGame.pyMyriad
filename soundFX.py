@@ -1,5 +1,5 @@
 import pygame
-
+import threading
 class SoundFX():
     def __init__(self):
         self.sounds = {}
@@ -35,7 +35,9 @@ class SoundFX():
         pygame.mixer.music.set_volume(.25)
 
     def playSound(self,soundName, maxTime=0):
-        channel = self.sounds[soundName].play(0,maxTime,0)
+        thread = threading.Thread(target=threadPlaySound, args=(self.sounds[soundName],))
+        thread.start()
+        #self.sounds[soundName].play(0,maxTime,0)
 
     def playSoundContinuously(self,soundName):
         channel = self.sounds[soundName].play(-1)
@@ -43,3 +45,7 @@ class SoundFX():
     def stopSound(self,soundName):
         channel = self.sounds[soundName].stop()
 
+
+def threadPlaySound(soundFxs):
+    soundFxs.play()
+    pass

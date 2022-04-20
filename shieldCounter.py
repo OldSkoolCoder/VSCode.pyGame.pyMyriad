@@ -2,22 +2,23 @@ import pygame
 import settings
 import random
 
-class Point():
-    def __init__(self, Game, X, Y, Value, FontName):
+class ShieldCounter():
+    def __init__(self, Game, X, Y, Value, FontName, FontSize):
         FontName += ".ttf"
 
         self.fontName = FontName
-        self.fontSize = settings.Point.fontSize
+        self.fontSize = FontSize
         self.X = X
         self.Y = Y
         self.value = Value
         self.alpha = settings.Point.defaultAlpha
+        self.alphaReduction = self.alpha / (settings.FRAMES_PER_SECOND)
         self.game = Game
 
     def draw(self):
         pgFont = pygame.font.Font(settings.Point.fontDir + self.fontName, self.fontSize)
 
-        textSurface = pgFont.render(str(self.value), True, (0, self.alpha, self.alpha))
+        textSurface = pgFont.render(str(self.value), True, (self.alpha, 0, 0))
         textRect = textSurface.get_rect()
         textRect.centerx = self.X
         textRect.centery = self.Y
@@ -25,7 +26,7 @@ class Point():
         self.game.screen.blit(textSurface, textRect)
 
     def update(self):
-        self.alpha -= settings.Point.alphaReduction
-        self.fontSize +=1
+        self.alpha -= self.alphaReduction
+        self.fontSize += 15
         if self.alpha < 0:
             self.alpha = 0

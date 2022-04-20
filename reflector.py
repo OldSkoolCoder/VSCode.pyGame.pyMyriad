@@ -7,7 +7,7 @@ import random
 class Reflector(hostile.Hostile):
 
     def __init__(self,game,X,Y):
-        super().__init__(game,1,10,0.2)
+        super().__init__(game,1,10,0,.3,2)
 
         self.reflective = True
 

@@ -7,7 +7,7 @@ import random
 class Virus(hostile.Hostile):
 
     def __init__(self,game,X,Y):
-        super().__init__(game,1,14,.2)
+        super().__init__(game,1,14,500,.2,1)
 
         self.reflective = False
 
@@ -17,7 +17,7 @@ class Virus(hostile.Hostile):
 
         self.X = X
         self.Y = Y
-        self.myValue = 500
+        #self.myValue = 500
         self.dY = 1
         #self.hitValue = 3
 

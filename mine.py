@@ -18,7 +18,7 @@ class Mine(element.Element):
 
         self.speed = 4
 
-        self.ticksPerFrame = settings.FRAMES_PER_SECOND / 4
+        self.ticksPerFrame = settings.FRAMES_PER_SECOND / 16
         self.reflective = False
         self.myValue = 0
 

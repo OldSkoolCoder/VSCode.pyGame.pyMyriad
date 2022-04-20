@@ -9,7 +9,7 @@ import random
 
 class Builder(hostile.Hostile):
     def __init__(self,game,X,Y):
-        super().__init__(game,1,15,0.3)
+        super().__init__(game,1,15,0,.3,2)
 
         self.movementTimer = 1
 

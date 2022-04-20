@@ -7,7 +7,7 @@ import random
 class Bomber(hostile.Hostile):
 
     def __init__(self,game,X,Y):
-        super().__init__(game,1,11,.3)
+        super().__init__(game,1,11,random.randint(1,6) * 100,.3,2)
 
         self.reflective = False
 
@@ -17,7 +17,7 @@ class Bomber(hostile.Hostile):
 
         self.X = X
         self.Y = Y
-        self.myValue = random.randint(1,6) * 100
+        #self.myValue = random.randint(1,6) * 100
         self.dY = 1
 
     def update(self):

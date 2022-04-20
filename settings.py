@@ -6,6 +6,7 @@ FRAMES_PER_SECOND = 60
 class Screen:
     WIDTH = 700             # Had to adjust for my laptop screen size (garymeg)
     HEIGHT = 800            # Had to adjust for my laptop screen size (garymeg)
+    backgroundMovementRate = 0.25
 
 class PlayableArea:
     Top = 0
@@ -18,13 +19,18 @@ class Player:
     reloadTime = .025 * FRAMES_PER_SECOND       # Halfed the time to get alternating bullets (garymeg)
     singleShot = 1
     rapidFire = 2
-    imIronMan = False
+    imIronMan = True
 
     invincibleDuration = 3
     invincibleDurationFPS = invincibleDuration * FRAMES_PER_SECOND
-    shieldActiveTime = 15
+    shieldActiveTime = 10
     shieldActiveTimeFPS = shieldActiveTime * FRAMES_PER_SECOND
     shieldActiveTimeWarningFPS = (shieldActiveTime - invincibleDuration) * FRAMES_PER_SECOND
+
+class Shield:
+    phaseStart = 0
+    phaseBlank = 1
+    phaseShow = 2
 
 class Hostile:
     maxHostilesPerRow = 15

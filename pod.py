@@ -13,7 +13,7 @@ import random
 class Pod(hostile.Hostile):
 
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave, 0.4)
+        super().__init__(game,HostileNo,Wave,1000,.4,10)
         self.animationSet = self.animation.copy()
         
         self.animation.clear()
@@ -22,7 +22,7 @@ class Pod(hostile.Hostile):
         self.animationSetShielded = self.animation.copy()
         self.animation.clear()
 
-        self.myValue = 1000
+        #self.myValue = 1000
         self.reflective = False
 
         self.speed = 2
@@ -34,6 +34,7 @@ class Pod(hostile.Hostile):
         self.determineDiagonalStartDirection()
         self.dX = self.dX / self.speedDivisor
         self.dY = self.dY / self.speedDivisor
+        #self.hitValue = 10
 
     def update(self):
         self.wrapBottomToTop()   

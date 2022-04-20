@@ -21,6 +21,8 @@ import playerLife
 import shieldIndicator
 import pod
 import assets
+import time
+import planets
 
 class Game:
     def __init__(self):
@@ -31,26 +33,27 @@ class Game:
         self.screen = pygame.display.set_mode((settings.Screen.WIDTH, settings.Screen.HEIGHT))
         pygame.display.set_caption(settings.TITLE)
         self.soundFx = soundFX.SoundFX()
-        self.soundFx.playSound('readySetGo')
         self.assets = assets.Assets()
 
         self.clock = pygame.time.Clock()
         self.running = True
-        self.fireMode = settings.Player.singleShot
-        #self.fireMode = settings.Player.rapidFire
+        #self.fireMode = settings.Player.singleShot
+        self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
         self.bgY = 0
         self.bgRelY = 0
         self.showHitBoxes = False
+        self.tickCounter = 0
+        self.planetTickCounter = 0
 
-        self.explosionSets = {}
-        self.explosionSets['Set1'] = []
-        self.loadAnimationSeries('Explosion/Set1', 'Exp-',62,self.explosionSets['Set1'],0,2)
+        # self.explosionSets = {}
+        # self.explosionSets['Set1'] = []
+        # self.loadAnimationSeries('Explosion/Set1', 'Exp-',62,self.explosionSets['Set1'],0,2)
 
-        self.explosionSets['Set2'] = []
-        self.loadAnimationSeries('Explosion/Set2', 'Exp-',62,self.explosionSets['Set2'],0,2)
-        self.explosionSets['Set3'] = []
-        self.loadAnimationSeries('Explosion/Set3', 'Exp-',62,self.explosionSets['Set3'],0,2)
+        # self.explosionSets['Set2'] = []
+        # self.loadAnimationSeries('Explosion/Set2', 'Exp-',62,self.explosionSets['Set2'],0,2)
+        # self.explosionSets['Set3'] = []
+        # self.loadAnimationSeries('Explosion/Set3', 'Exp-',62,self.explosionSets['Set3'],0,2)
 
         self.bullets = pygame.sprite.Group()
         self.hostiles = pygame.sprite.Group()
@@ -58,13 +61,17 @@ class Game:
         self.ordinance = pygame.sprite.Group()
         self.playerLifes = pygame.sprite.Group()
         self.shieldIndicators = pygame.sprite.Group()
+        self.passive = pygame.sprite.Group()
         self.points = []
         self.noOfLives = 0
         self.noOfShields = 0
+        self.gameMultiplier = 1
 
     def new(self):
-        self.level = 1
-        self.wave = 0
+        self.soundFx.playSound('readySetGo')
+        time.sleep(2)
+        self.level = 0
+        self.wave = 9
         self.powerUp = 0
         self.noOfLives = 4
         self.noOfShields = 3
@@ -77,6 +84,7 @@ class Game:
         self.ordinance.empty()
         self.playerLifes.empty()
         self.shieldIndicators.empty()
+        self.passive.empty()
 
         # Add Player Sprites
         self.Player = player.Player(self) 
@@ -100,11 +108,16 @@ class Game:
             self.clock.tick(settings.FRAMES_PER_SECOND)
             if len(self.hostiles) + len(self.ordinance) <= self.level + 1:
                 self.addNextWaveLevelOfAliens()
-                self.newLevel()
+
+            if self.tickCounter == 0 and self.planetTickCounter == 0 and random.random() <.7:
+                self.passive.add(planets.Planets(self))
 
             self.events()
             self.update()
             self.draw()
+            self.tickCounter = (self.tickCounter + 1) % settings.FRAMES_PER_SECOND
+            self.planetTickCounter = (self.planetTickCounter + 1) % (settings.FRAMES_PER_SECOND * 16)
+
 
     def update(self):
         # Game Loop Update Method
@@ -116,6 +129,7 @@ class Game:
         self.explosions.update()
         self.playerLifes.update()
         self.shieldIndicators.update()
+        self.passive.update()
 
         self.bulletHitHostiles()
 
@@ -131,8 +145,10 @@ class Game:
             else:
                 self.removeLife()
                 self.allSprites.remove(self.Player.shipExplosion)
-                self.Player.iAmAlive()
-                #self.playing = False
+                if self.noOfLives != 0:
+                    self.Player.iAmAlive()
+                else:
+                    self.playing = False
 
 
         for eachPoint in self.points:
@@ -140,6 +156,7 @@ class Game:
             if eachPoint.alpha == 0:
                 self.points.remove(eachPoint)
 
+        self.removeDonePassives()
         self.removeDoneBullets()
         self.removeDeadHostiles()
         self.removeExplosions()
@@ -169,8 +186,9 @@ class Game:
         self.screen.blit(self.background, (0,(self.bgRelY - self.background.get_rect().height)))
         if self.bgRelY < settings.Screen.HEIGHT:
             self.screen.blit(self.background, (0,self.bgRelY))
-        self.bgY +=0.5
+        self.bgY += settings.Screen.backgroundMovementRate
 
+        self.passive.draw(self.screen)
         self.allSprites.draw(self.screen)
         self.bullets.draw(self.screen)
         self.hostiles.draw(self.screen)
@@ -219,6 +237,11 @@ class Game:
             if eachBullet.done:
                 self.bullets.remove(eachBullet)
 
+    def removeDonePassives(self):
+        for eachPassive in self.passive:
+            if eachPassive.done:
+                self.passive.remove(eachPassive)
+
     def bulletHitHostiles(self):
         for eachBullet in self.bullets:
             ordinanceHits = pygame.sprite.spritecollide(eachBullet, self.ordinance, False) # Regular Square Hit Box
@@ -239,14 +262,16 @@ class Game:
             if hostilesHits:
                 for eachHostile in hostilesHits:
                     if not eachHostile.reflective:
-                        #Add Explosion to Sprite Array
-                        self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
-                        eachHostile.imDead = True
-                        self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
-                        self.hostiles.remove(eachHostile)
-                        self.soundFx.playSound('explosion1')
-                    else:
-                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave, self.powerUp))
+                        eachHostile.hitValue -= 1
+                        if eachHostile.hitValue == 0:
+                            #Add Explosion to Sprite Array
+                            self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
+                            eachHostile.imDead = True
+                            self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                            self.hostiles.remove(eachHostile)
+                            self.soundFx.playSound('explosion1')
+                        else:
+                            self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave, self.powerUp))
                 
                 eachBullet.done = True
 
@@ -285,6 +310,8 @@ class Game:
         if self.wave > 9:
             self.level +=1
             self.wave = 1
+            self.newLevel()
+
 
         WaveTitle = f'Get Ready-Entering Round {self.wave}'
         textWaveTitle = text.Text(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, WaveTitle, 'Vinegar Stroke',50)

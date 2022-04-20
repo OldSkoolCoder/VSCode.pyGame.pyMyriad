@@ -7,7 +7,7 @@ import random
 class Box(hostile.Hostile):
 
     def __init__(self,game,HostileNo,Wave):
-        super().__init__(game,HostileNo,Wave, 0.4)
+        super().__init__(game,HostileNo,Wave,250,.4,2)
         self.animationSet = self.animation.copy()
         
         self.animation.clear()
@@ -16,7 +16,7 @@ class Box(hostile.Hostile):
         self.animationSetShielded = self.animation.copy()
         self.animation.clear()
 
-        self.myValue = 250
+        #self.myValue = 250
         self.reflective = False
 
         self.speed = 2
