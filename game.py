@@ -29,6 +29,9 @@ import shieldCounter
 
 #TODO : High Score
 # Game Over Screen
+# Added Multipliers Bonuses
+# Add Difficulty selector
+
 
 class Game:
     def __init__(self):
