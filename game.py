@@ -10,8 +10,9 @@ import explosion
 import point
 import reflectedBullet
 import buzzers
-import meteorite
 import asteroid
+import meteor
+import meteorite
 import swoopers
 import fighters
 import text
@@ -23,6 +24,11 @@ import pod
 import assets
 import time
 import planets
+import bonus
+import shieldCounter
+
+#TODO : High Score
+# Game Over Screen
 
 class Game:
     def __init__(self):
@@ -37,14 +43,18 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.running = True
-        #self.fireMode = settings.Player.singleShot
-        self.fireMode = settings.Player.rapidFire
         self.showHitBoxes = False
         self.bgY = 0
         self.bgRelY = 0
         self.showHitBoxes = False
         self.tickCounter = 0
         self.planetTickCounter = 0
+        self.BonusAlreadyDropped = False
+        self.nextShipScoreTarget = 100000
+
+        # Power Up Flags
+        self.fireMode = settings.Player.singleShot
+        #self.fireMode = settings.Player.rapidFire
 
         # self.explosionSets = {}
         # self.explosionSets['Set1'] = []
@@ -59,10 +69,12 @@ class Game:
         self.hostiles = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
         self.ordinance = pygame.sprite.Group()
-        self.playerLifes = pygame.sprite.Group()
+        self.playerLives = pygame.sprite.Group()
         self.shieldIndicators = pygame.sprite.Group()
         self.passive = pygame.sprite.Group()
+        self.bonus = pygame.sprite.Group()
         self.points = []
+        self.totalPoints = 0
         self.noOfLives = 0
         self.noOfShields = 0
         self.gameMultiplier = 1
@@ -75,6 +87,9 @@ class Game:
         self.powerUp = 0
         self.noOfLives = 4
         self.noOfShields = 3
+        self.BonusAlreadyDropped = True
+        self.totalPoints = 0
+        self.nextShipScoreTarget = settings.General.newShipTarget
 
         # Starts a new game
         self.allSprites = pygame.sprite.Group()
@@ -82,9 +97,10 @@ class Game:
         self.bullets.empty()
         self.hostiles.empty()
         self.ordinance.empty()
-        self.playerLifes.empty()
+        self.playerLives.empty()
         self.shieldIndicators.empty()
         self.passive.empty()
+        self.bonus.empty()
 
         # Add Player Sprites
         self.Player = player.Player(self) 
@@ -112,6 +128,9 @@ class Game:
             if self.tickCounter == 0 and self.planetTickCounter == 0 and random.random() <.7:
                 self.passive.add(planets.Planets(self))
 
+            if self.tickCounter == 0 and not self.BonusAlreadyDropped:
+                self.dropABonus()
+
             self.events()
             self.update()
             self.draw()
@@ -127,9 +146,10 @@ class Game:
         self.hostiles.update()
         self.ordinance.update()
         self.explosions.update()
-        self.playerLifes.update()
+        self.playerLives.update()
         self.shieldIndicators.update()
         self.passive.update()
+        self.bonus.update()
 
         self.bulletHitHostiles()
 
@@ -161,6 +181,7 @@ class Game:
         self.removeDeadHostiles()
         self.removeExplosions()
         self.removeDeadOrdinance()
+        self.removeDoneBonuses()
 
     def events(self):
         self.Player.events()
@@ -194,8 +215,11 @@ class Game:
         self.hostiles.draw(self.screen)
         self.ordinance.draw(self.screen)
         self.explosions.draw(self.screen)
-        self.playerLifes.draw(self.screen)
+        self.playerLives.draw(self.screen)
         self.shieldIndicators.draw(self.screen)
+        self.bonus.draw(self.screen)
+
+        self.showScore()
 
         for eachPoint in self.points:
             eachPoint.draw()
@@ -226,7 +250,25 @@ class Game:
 
     def showStartScreen(self):
         # Show the start screen of the game
-        pass
+        self.screen.fill(settings.Colours.RED3)
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                # check for closing the window
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_F1:
+                        waiting = False
+
+            self.ShowText(settings.General.oskFont, settings.General.oskFontSize,'OldSkoolCoder',settings.Colours.WHITE,settings.Screen.WIDTH / 2, 80)
+            self.ShowText(settings.General.oskFont, int(settings.General.oskFontSize * .66),'and Crew Presents',settings.Colours.WHITE,settings.Screen.WIDTH / 2, 120)
+            self.ShowText('kberry.ttf', 100,'A Steve Clark Game',settings.Colours.BLACK,settings.Screen.WIDTH / 2, 280)
+            self.ShowText(settings.General.myriadFont, settings.General.myriadFontSize,'MYRIAD',settings.Colours.BLUE,settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2)
+            self.ShowText('kberry.ttf', 80,'A Easter 2022 Teaching Project',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 530)
+            self.ShowText('kberry.ttf', 60,'Using Python language and pygame',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 600)
+            self.ShowText('Vinegar Stroke.ttf', 50,'Coded in 24 Hrs',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 670)
+            self.ShowText('Vinegar Stroke.ttf', 60,'Press "F1" to Start',settings.Colours.BLACK,settings.Screen.WIDTH / 2, 750)
+
+            pygame.display.flip()
 
     def showGameOverScreen(self):
         # show the Game over screen
@@ -241,6 +283,11 @@ class Game:
         for eachPassive in self.passive:
             if eachPassive.done:
                 self.passive.remove(eachPassive)
+
+    def removeDoneBonuses(self):
+        for eachBonus in self.bonus:
+            if eachBonus.imDead:
+                self.bonus.remove(eachBonus)
 
     def bulletHitHostiles(self):
         for eachBullet in self.bullets:
@@ -267,9 +314,19 @@ class Game:
                             #Add Explosion to Sprite Array
                             self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
                             eachHostile.imDead = True
-                            self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                            self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, settings.Point.pointsFont))
                             self.hostiles.remove(eachHostile)
                             self.soundFx.playSound('explosion1')
+                            # if isinstance(eachHostile, asteroid.Asteroid):
+                            #     self.hostiles.add(meteor.Meteor(self,eachHostile.X,eachHostile.Y))
+                            #     self.hostiles.add(meteor.Meteor(self,eachHostile.X,eachHostile.Y))
+                            #     self.hostiles.add(meteor.Meteor(self,eachHostile.X,eachHostile.Y))
+                            #     self.hostiles.add(meteor.Meteor(self,eachHostile.X,eachHostile.Y))
+                            # elif isinstance(eachHostile, meteor.Meteor):
+                            #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
+                            #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
+                            #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
+                            #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
                         else:
                             self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave, self.powerUp))
                 
@@ -312,9 +369,11 @@ class Game:
             self.wave = 1
             self.newLevel()
 
+        if self.level != 1:
+            self.BonusAlreadyDropped = False
 
         WaveTitle = f'Get Ready-Entering Round {self.wave}'
-        textWaveTitle = text.Text(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, WaveTitle, 'Vinegar Stroke',50)
+        textWaveTitle = text.Text(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, WaveTitle, settings.General.waveIntoFont,50)
         self.points.append(textWaveTitle)
         self.soundFx.playSound(f'round{self.wave}')
 
@@ -345,7 +404,10 @@ class Game:
                     self.hostiles.add(meteorite.Meteorite(self))
                 else:
                     if random.random() < .04:
-                        self.hostiles.add(asteroid.Asteroid(self))
+                        self.hostiles.add(meteor.Meteor(self))
+                    else:
+                        if random.random() < .04:
+                            self.hostiles.add(asteroid.Asteroid(self))
 
     def shieldHitHostiles(self):
         ordinanceHits = pygame.sprite.spritecollide(self.Player.shieldSprite, self.ordinance, False) # Regular Square Hit Box
@@ -361,7 +423,7 @@ class Game:
             for eachHostile in hostilesHits:
                 self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
                 eachHostile.imDead = True
-                self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, settings.Point.pointsFont))
 
         self.shipHitHostiles()
 
@@ -386,21 +448,31 @@ class Game:
                 for eachHostile in hostilesHits:
                     self.explosions.add(explosion.Explosion(self, eachHostile.X, eachHostile.Y))
                     eachHostile.imDead = True
-                    self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, 'Vinegar Stroke'))
+                    self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, settings.Point.pointsFont))
+
+        bonusHits = pygame.sprite.spritecollide(self.Player, self.bonus, False, pygame.sprite.collide_circle) # Using Circle Hit Box
+        if bonusHits:
+            if not self.Player.invincible:
+                for eachBonus in bonusHits:
+                    #textBonus = shieldCounter.ShieldCounter(self, eachBonus.X, eachBonus.Y, eachBonus.bonusName, 'Vinegar Stroke',20,1)
+                    textBonus = shieldCounter.ShieldCounter(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, eachBonus.bonusName, settings.Bonus.bonusFont,20,1)
+                    self.points.append(textBonus)
+                    eachBonus.imDead = True
+                    self.processBonus(eachBonus.bonusName)
 
     def setUpLivesRemaining(self):
         for lives in range(1,self.noOfLives+1):
             life = playerLife.PlayerLife(self, lives*25, settings.Screen.HEIGHT - 20)
-            self.playerLifes.add(life)
+            self.playerLives.add(life)
 
     def addLife(self):
         self.noOfLives +=1
-        self.playerLifes.empty()
+        self.playerLives.empty()
         self.setUpLivesRemaining()
 
     def removeLife(self):
         self.noOfLives -=1
-        self.playerLifes.empty()
+        self.playerLives.empty()
         self.setUpLivesRemaining()
 
     def setUpShieldsRemaining(self):
@@ -414,6 +486,70 @@ class Game:
         self.setUpShieldsRemaining()
 
     def addShields(self):
-        self.noOfShields +=1
-        self.shieldIndicators.empty()
-        self.setUpShieldsRemaining()
+        if self.noOfShields <= 15:
+            self.noOfShields +=1
+            self.shieldIndicators.empty()
+            self.setUpShieldsRemaining()
+
+    def processBonus(self,bonusName):
+
+        self.soundFx.playSound('powerup')
+        if bonusName == "Cannons":
+            self.Player.cannonMode()
+        elif bonusName == "ExtraLife":
+            self.addLife()
+        elif bonusName == "ExtraShield":
+            self.addShields()
+        elif bonusName == "FireSpread":
+            self.Player.spreadFireMode()
+        elif bonusName == "IronMan":
+            self.Player.ironManMode()
+        elif bonusName == "RapidFire":
+            self.Player.rapidFireMode()
+        elif bonusName == "SuperBomb":
+            for eachHostile in self.hostiles:
+                eachHostile.imDead = True
+                self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, settings.Point.pointsFont))
+        elif bonusName == "Multiplier2":
+            pass
+        elif bonusName == "MultiplierA":
+            pass
+
+    def dropABonus(self):
+        if random.random() < .22:
+            bonusName = settings.AVALIABLE_BONUSES[random.randint(0,len(settings.AVALIABLE_BONUSES)-1)]
+
+            if bonusName == "SuperBomb":
+                if random.random() < 0.04:
+                    self.bonus.add(bonus.Bonus(self,bonusName))
+                    self.BonusAlreadyDropped = True
+            else:
+                self.bonus.add(bonus.Bonus(self,bonusName))
+                self.BonusAlreadyDropped = True
+
+    def showScore(self):
+        pgFont = pygame.font.Font(settings.Point.fontDir + settings.General.scoreBoardFont, settings.General.scoreBoardFontSize)
+
+        textSurface = pgFont.render(settings.General.scoreBoardText + format(str(self.totalPoints).rjust(7,'0')), True, (settings.Colours.LIGHTSEAGREEN))
+        textRect = textSurface.get_rect()
+        textRect.topright = (settings.PlayableArea.RightMost, settings.PlayableArea.Top)
+
+        self.screen.blit(textSurface, textRect)
+
+        if self.totalPoints >= self.nextShipScoreTarget:
+            self.addLife()
+            self.addShields()
+            self.addShields()
+            self.addShields()
+            self.soundFx.playSound('congratulations')
+            textBonus = shieldCounter.ShieldCounter(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, "Extra Life and Shields", settings.Bonus.bonusFont,10,1)
+            self.points.append(textBonus)
+            self.nextShipScoreTarget += settings.General.newShipTarget
+
+    def ShowText(self, fontName, fontSize, text, textColour, X,Y):
+
+        pgFont = pygame.font.Font(settings.Point.fontDir + fontName, fontSize)
+        textSurface = pgFont.render(text, True, (textColour))
+        textRect = textSurface.get_rect()
+        textRect.center = (X, Y)
+        self.screen.blit(textSurface, textRect)

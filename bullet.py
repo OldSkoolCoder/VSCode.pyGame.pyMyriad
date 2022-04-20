@@ -4,7 +4,7 @@ import element
 import random
 
 class Bullet(element.Element):
-    def __init__(self,game,x,y,wave):
+    def __init__(self,game,x,y,wave,deviation=0.0):
 
         bulletSet = "CEG"[game.powerUp]
 
@@ -13,6 +13,7 @@ class Bullet(element.Element):
 
         self.done = False
         self.game.soundFx.playSound('bullet')
+        self.deviation = deviation
 
         image = super().loadAnimationFrame(f'Laser{bulletSet}',wave - 1, 90, 0.25)
         #image1 = pygame.transform.rotozoom(image,90,.25)
@@ -27,10 +28,14 @@ class Bullet(element.Element):
         self.noOfFrames = 2
         self.speed = 24
 
+        self.dX = 0
+        if deviation != 0:
+            self.dX = self.deviation
+
         self.ticksPerFrame = settings.FRAMES_PER_SECOND / 4
 
     def update(self):
-        super().move(0,-1,self.speed-1,False)
+        super().move(self.dX,-1,self.speed-1,False)
         #self.Y -=24
 
         self.tickCounter += 1

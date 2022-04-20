@@ -3,11 +3,12 @@ import settings
 import random
 
 class ShieldCounter():
-    def __init__(self, Game, X, Y, Value, FontName, FontSize):
+    def __init__(self, Game, X, Y, Value, FontName, FontSize, FontSizeIncrement = 15):
         FontName += ".ttf"
 
         self.fontName = FontName
         self.fontSize = FontSize
+        self.fontSizeIncrement = FontSizeIncrement
         self.X = X
         self.Y = Y
         self.value = Value
@@ -27,6 +28,6 @@ class ShieldCounter():
 
     def update(self):
         self.alpha -= self.alphaReduction
-        self.fontSize += 15
+        self.fontSize += self.fontSizeIncrement
         if self.alpha < 0:
             self.alpha = 0

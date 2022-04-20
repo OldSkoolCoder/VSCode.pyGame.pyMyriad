@@ -1,29 +1,45 @@
 # Game Options and Settings
 
-TITLE = "TITLE"
+TITLE = "Myriad"
 FRAMES_PER_SECOND = 60
+AVALIABLE_BONUSES = ['Cannons', 'ExtraLife', 'ExtraShield', 'FireSpread', 'IronMan', 'Multiplier2', 'MultiplierA', 'RapidFire', 'SuperBomb']
 
 class Screen:
     WIDTH = 700             # Had to adjust for my laptop screen size (garymeg)
     HEIGHT = 800            # Had to adjust for my laptop screen size (garymeg)
     backgroundMovementRate = 0.25
 
+class General:
+    waveIntoFont = 'Vinegar Stroke'
+    scoreBoardFont = "GAMEPLAY-1987.ttf"
+    scoreBoardFontSize = 33
+    scoreBoardText = "SCORE : "
+    newShipTarget = 100000
+    myriadFont = 'Digitek.ttf'
+    myriadFontSize = 100
+    oskFont = 'MODENINE.TTF'
+    oskFontSize = 66
 class PlayableArea:
     Top = 0
     Bottom = Screen.HEIGHT - 50
     LeftMost = 0
     RightMost = Screen.WIDTH
+
 class Player:
     respawnX = ((PlayableArea.RightMost - PlayableArea.LeftMost) / 2) + PlayableArea.LeftMost
     respawnY = PlayableArea.Bottom - 100
     reloadTime = .025 * FRAMES_PER_SECOND       # Halfed the time to get alternating bullets (garymeg)
     singleShot = 1
     rapidFire = 2
-    imIronMan = True
+    imIronMan = False
 
     invincibleDuration = 3
     invincibleDurationFPS = invincibleDuration * FRAMES_PER_SECOND
     shieldActiveTime = 10
+    deathShieldActiveTime = 5
+    ironManActivateTime = 20
+    cannonActiveDuration = 20
+    rapidFireActiveDuration = 20
     shieldActiveTimeFPS = shieldActiveTime * FRAMES_PER_SECOND
     shieldActiveTimeWarningFPS = (shieldActiveTime - invincibleDuration) * FRAMES_PER_SECOND
 
@@ -31,6 +47,7 @@ class Shield:
     phaseStart = 0
     phaseBlank = 1
     phaseShow = 2
+    shieldFont = 'Vinegar Stroke'
 
 class Hostile:
     maxHostilesPerRow = 15
@@ -42,7 +59,11 @@ class Point:
     defaultAlpha = 255
     alphaReduction = defaultAlpha // (onScreenDuration * FRAMES_PER_SECOND)
     fontDir = "Assets/Fonts/"
-    
+    pointsFont = 'Vinegar Stroke'
+
+class Bonus:
+    bonusFont = 'Vinegar Stroke'
+
 class Colours:
     # Define Colours
     ALICEBLUE = (240, 248, 255)

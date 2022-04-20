@@ -14,6 +14,9 @@ class Point():
         self.alpha = settings.Point.defaultAlpha
         self.game = Game
 
+        self.game.totalPoints += Value
+
+
     def draw(self):
         pgFont = pygame.font.Font(settings.Point.fontDir + self.fontName, self.fontSize)
 

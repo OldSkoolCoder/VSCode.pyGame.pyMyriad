@@ -10,21 +10,33 @@ class Assets():
         self.animationsSets['Explosion']['Set3'] = self.loadAnimationSeries('Explosion/Set3', 'Exp-',62,0,2)
 
         self.animationsSets['Asteroid'] = {}
-        self.animationsSets['Asteroid']['SetA'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidA-',16,0,.5)
-        self.animationsSets['Asteroid']['SetB'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidB-',16,0,.5)
-        self.animationsSets['Asteroid']['SetC'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidC-',16,0,.5)
-        self.animationsSets['Asteroid']['SetD'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidD-',16,0,.5)
-        self.animationsSets['Asteroid']['SetE'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidE-',16,0,.5)
-        self.animationsSets['Asteroid']['SetF'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidF-',16,0,.5)
-        self.animationsSets['Asteroid']['SetG'] = self.loadAnimationSeries('Asteroids/Large', 'AsteroidG-',16,0,.5)
+        self.animationsSets['Asteroid']['SetA'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidA-',16,0,.5)
+        self.animationsSets['Asteroid']['SetB'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidB-',16,0,.5)
+        self.animationsSets['Asteroid']['SetC'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidC-',16,0,.5)
+        self.animationsSets['Asteroid']['SetD'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidD-',16,0,.5)
+        self.animationsSets['Asteroid']['SetE'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidE-',16,0,.5)
+        self.animationsSets['Asteroid']['SetF'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidF-',16,0,.5)
+        self.animationsSets['Asteroid']['SetG'] = self.loadAnimationSeries('/Rocks/Asteroids', 'AsteroidG-',16,0,.5)
+
+        self.animationsSets['Meteor'] = {}
+        self.animationsSets['Meteor']['SetA'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorA-',16)
+        self.animationsSets['Meteor']['SetB'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorB-',16)
+        self.animationsSets['Meteor']['SetC'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorC-',16)
+        self.animationsSets['Meteor']['SetD'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorD-',16)
+        self.animationsSets['Meteor']['SetE'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorE-',16)
+        self.animationsSets['Meteor']['SetF'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorF-',16)
+        self.animationsSets['Meteor']['SetG'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorG-',16)
+        self.animationsSets['Meteor']['SetH'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorH-',16)
+        self.animationsSets['Meteor']['SetI'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorI-',16)
+        self.animationsSets['Meteor']['SetJ'] = self.loadAnimationSeries('/Rocks/Meteors', 'MeteorJ-',16)
 
         self.animationsSets['Meteorite'] = {}
-        self.animationsSets['Meteorite']['SetA'] = self.loadAnimationSeries('Asteroids/Small', 'MeteoriteA-',16)
-        self.animationsSets['Meteorite']['SetB'] = self.loadAnimationSeries('Asteroids/Small', 'MeteoriteB-',16)
-        self.animationsSets['Meteorite']['SetC'] = self.loadAnimationSeries('Asteroids/Small', 'MeteoriteC-',16)
-        self.animationsSets['Meteorite']['SetD'] = self.loadAnimationSeries('Asteroids/Small', 'MeteoriteD-',16)
-        self.animationsSets['Meteorite']['SetE'] = self.loadAnimationSeries('Asteroids/Small', 'MeteoriteE-',16)
-        self.animationsSets['Meteorite']['SetF'] = self.loadAnimationSeries('Asteroids/Small', 'MeteoriteF-',16)
+        self.animationsSets['Meteorite']['SetA'] = self.loadAnimationSeries('/Rocks/Meteorites', 'MeteoriteA-',16)
+        self.animationsSets['Meteorite']['SetB'] = self.loadAnimationSeries('/Rocks/Meteorites', 'MeteoriteB-',16)
+        self.animationsSets['Meteorite']['SetC'] = self.loadAnimationSeries('/Rocks/Meteorites', 'MeteoriteC-',16)
+        self.animationsSets['Meteorite']['SetD'] = self.loadAnimationSeries('/Rocks/Meteorites', 'MeteoriteD-',16)
+        self.animationsSets['Meteorite']['SetE'] = self.loadAnimationSeries('/Rocks/Meteorites', 'MeteoriteE-',16)
+        self.animationsSets['Meteorite']['SetF'] = self.loadAnimationSeries('/Rocks/Meteorites', 'MeteoriteF-',16)
 
         self.animationsSets['Alien'] = {}
         self.animationsSets['Alien']['Wave01'] = self.loadAnimationSeries('Aliens/SpaceShips/Wave01', 'Alien01-',8,0,.3)
@@ -47,6 +59,17 @@ class Assets():
         #self.animationsSets['Alien']['Wave18'] = self.loadAnimationSeries('Aliens/SpaceShips/Wave8', 'Alien18-',8,0,.4)
 
         self.animationsSets['Planets'] = self.loadAnimationSeries('BackDrops/Planets', 'Planet-',18,270)
+
+        self.animationsSets['Bonus'] = {}
+        self.animationsSets['Bonus']['Cannons'] = self.loadAnimationSeries('/Bonus', 'BonusCannons',2,0,.7)
+        self.animationsSets['Bonus']['ExtraLife'] = self.loadAnimationSeries('/Bonus', 'BonusExtraLife',2,0,.7)
+        self.animationsSets['Bonus']['ExtraShield'] = self.loadAnimationSeries('/Bonus', 'BonusExtraShield',2,0,.7)
+        self.animationsSets['Bonus']['FireSpread'] = self.loadAnimationSeries('/Bonus', 'BonusFireSpread',2,0,.7)
+        self.animationsSets['Bonus']['IronMan'] = self.loadAnimationSeries('/Bonus', 'BonusIronMan',2,0,.7)
+        self.animationsSets['Bonus']['Multiplier2'] = self.loadAnimationSeries('/Bonus', 'BonusMultiplier2',2,0,.7)
+        self.animationsSets['Bonus']['MultiplierA'] = self.loadAnimationSeries('/Bonus', 'BonusMultiplierA',2,0,.7)
+        self.animationsSets['Bonus']['RapidFire'] = self.loadAnimationSeries('/Bonus', 'BonusRapidFire',2,0,.7)
+        self.animationsSets['Bonus']['SuperBomb'] = self.loadAnimationSeries('/Bonus', 'BonusSuperBomb',2,0,1)
 
 
     def loadAnimationFrame(self, imgDir, imageName, frameNo, angle=0,zoom=1):

@@ -4,6 +4,7 @@ import element
 import bullet
 import shield
 import explosion
+import shieldCounter
 
 class Player(element.Element):
     def __init__(self,game):
@@ -21,7 +22,17 @@ class Player(element.Element):
         self.haveWeFired = False
         self.held = 1       # Variable to hold reloading delay extender (Garymeg)
         self.bulletSide = 1 # Variable to hold side ship fires from (Garymeg)
+
         self.invincible = False # Shield Flag
+
+        # Power Ups
+        self.cannons = False
+        self.cannonsDuration = 0
+        self.spreadfire = False
+        self.spreadfireDuration = 0
+        self.rapidFire = False
+        self.rapidFireDuration = 0
+        self.ironMan = False
 
         #TODO : Sort out Sprite
         self.shieldSprite = shield.Shield(game,self.X,self.Y)
@@ -77,7 +88,7 @@ class Player(element.Element):
 
         self.fireTimer -=1
 
-        if self.fireTimer < 0 and keys[pygame.K_SPACE] and not self.invincible:
+        if self.fireTimer < 0 and keys[pygame.K_SPACE] and (not self.invincible or self.ironMan):
             self.shootLaser()
                     
         if self.game.fireMode == settings.Player.rapidFire:
@@ -90,7 +101,7 @@ class Player(element.Element):
 
         if keys[pygame.K_RETURN]:
             if self.game.noOfShields > 0:
-                self.activateShield()
+                self.activateShield(settings.Player.shieldActiveTime)
 
     def update(self):
         super().move(self.dX,0,self.speed-abs(self.dX))
@@ -99,6 +110,19 @@ class Player(element.Element):
         self.tickCounter += 1
         if self.tickCounter >= settings.FRAMES_PER_SECOND:
             self.tickCounter = 0
+            if self.cannons:
+                self.cannonsDuration -=1
+                if self.cannonsDuration == 0:
+                    self.cannons = False
+            if self.rapidFire:
+                self.rapidFireDuration -=1
+                if self.rapidFireDuration == 0:
+                    self.rapidFire = False
+            if self.spreadfire:
+                self.spreadfireDuration -=1
+                if self.spreadfireDuration == 0:
+                    self.spreadfire = False
+
 
         frameNo = int(self.tickCounter // self.ticksPerFrame)
         if self.rotateLeft == True:
@@ -116,13 +140,19 @@ class Player(element.Element):
             super().setAnimationFrame(self.imageBlank,True)
 
     def shootLaser(self):
-        if self.game.fireMode == settings.Player.rapidFire:
+        if self.rapidFire:
             if self.bulletSide % 2:
                 self.game.bullets.add(bullet.Bullet(self.game, self.X-9, (self.Y - self.rect.height/2),self.game.wave))
                 self.bulletSide = 2
+                if self.cannons:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X, (self.Y - self.rect.height/2),self.game.wave))
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X+18, (self.Y),self.game.wave))
             else:
                 self.game.bullets.add(bullet.Bullet(self.game, self.X+9, (self.Y - self.rect.height/2),self.game.wave))
                 self.bulletSide = 1
+                if self.cannons:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X, (self.Y - self.rect.height/2),self.game.wave))
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X-18, (self.Y),self.game.wave))
 
             self.fireTimer = settings.Player.reloadTime * self.held # self.held is a time multiplyer to slow rapidfire down (Garymeg)
             self.held += 0.05                                        # keep slowing down rapidfire (Garymeg)
@@ -131,17 +161,34 @@ class Player(element.Element):
             if not(self.haveWeFired):
                 self.game.bullets.add(bullet.Bullet(self.game, self.X-9, (self.Y - self.rect.height/2),self.game.wave))
                 self.game.bullets.add(bullet.Bullet(self.game, self.X+9, (self.Y - self.rect.height/2),self.game.wave))
-                self.haveWeFired = True
-                self.fireTimer = settings.Player.reloadTime
 
-    def activateShield(self):
+                if self.cannons:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X, (self.Y - self.rect.height/2),self.game.wave))
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X-18, (self.Y),self.game.wave))
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X+18, (self.Y),self.game.wave))
+
+                if self.spreadfire:
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X-22, (self.Y),self.game.wave,-.2))
+                    self.game.bullets.add(bullet.Bullet(self.game, self.X+22, (self.Y),self.game.wave,.2))
+    
+        self.haveWeFired = True
+        self.fireTimer = settings.Player.reloadTime
+
+    def activateShield(self, timeSecs):
         self.invincible = True
-        self.shieldSprite.activateShield()
+        self.shieldSprite.activateShield(timeSecs)
 
     def whoopsImDead(self):
         self.alive = False
         self.shipExplosion = explosion.Explosion(self.game, self.X, self.Y,2)
+        self.game.explosions.add(explosion.Explosion(self.game, self.X, self.Y - 30,2))
+        self.game.explosions.add(explosion.Explosion(self.game, self.X, self.Y + 30 ,2))
+        self.game.explosions.add(explosion.Explosion(self.game, self.X-30, self.Y,2))
+        self.game.explosions.add(explosion.Explosion(self.game, self.X+30, self.Y,2))
         self.game.allSprites.add(self.shipExplosion)
+        self.game.soundFx.playSound('medic')
+        textBonus = shieldCounter.ShieldCounter(self.game, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, "Ship Damaged", settings.Bonus.bonusFont,10,2)
+        self.game.points.append(textBonus)
 
     def iAmAlive(self):
         self.X = settings.Player.respawnX
@@ -151,4 +198,20 @@ class Player(element.Element):
         
         self.alive = True
         self.game.noOfShields +=1
-        self.activateShield()
+        self.activateShield(settings.Player.deathShieldActiveTime)
+
+    def ironManMode(self):
+        self.ironMan = True
+        self.activateShield(settings.Player.ironManActivateTime)
+
+    def cannonMode(self):
+        self.cannons = True
+        self.cannonsDuration = settings.Player.cannonActiveDuration
+
+    def spreadFireMode(self):
+        self.spreadfire = True
+        self.spreadfireDuration = settings.Player.cannonActiveDuration
+
+    def rapidFireMode(self):
+        self.rapidFire = True
+        self.rapidFireDuration = settings.Player.rapidFireActiveDuration

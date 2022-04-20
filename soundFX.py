@@ -30,6 +30,11 @@ class SoundFX():
         self.sounds["round8"] = pygame.mixer.Sound("Assets/VoiceOver/round8.ogg")
         self.sounds["round9"] = pygame.mixer.Sound("Assets/VoiceOver/round9.ogg")
         self.sounds["readySetGo"] = pygame.mixer.Sound("Assets/VoiceOver/ReadySetGo.ogg")
+        self.sounds["powerup"] = pygame.mixer.Sound("Assets/VoiceOver/PowerUp.ogg")
+        self.sounds["congratulations"] = pygame.mixer.Sound("Assets/VoiceOver/Congratulations.ogg")
+        self.sounds["medic"] = pygame.mixer.Sound("Assets/VoiceOver/Medic.ogg")
+        self.sounds["missionfailed"] = pygame.mixer.Sound("Assets/VoiceOver/MissionFailed.ogg")
+        self.sounds["newhighscore"] = pygame.mixer.Sound("Assets/VoiceOver/NewHighscore.ogg")
 
         self.gameMusic = pygame.mixer.music.load("Assets/GameMusic/GameMusic1.ogg")
         pygame.mixer.music.set_volume(.25)

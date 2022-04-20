@@ -28,10 +28,14 @@ class Shield(element.Element):
 
         self.setAnimationFrame(self.animation[self.currentFrameNo],True)
 
+        self.shieldActiveTime = 0
+        self.shieldActiveTimeFPS = settings.Player.shieldActiveTime
+        self.shieldActiveTimeWarningFPS = settings.Player.shieldActiveTimeWarningFPS
+
     def update(self):
         if self.activated:
             self.invincibleTimer +=1
-            if self.invincibleTimer >= settings.Player.shieldActiveTimeFPS:
+            if self.invincibleTimer >= self.shieldActiveTimeFPS:
                 self.activated = False
                 self.invincibleTimer = 0
                 self.currentFrameNo = self.frameBlank
@@ -40,7 +44,7 @@ class Shield(element.Element):
                 self.game.soundFx.stopSound('shield4')
 
 
-            elif self.invincibleTimer >= settings.Player.shieldActiveTimeWarningFPS:
+            elif self.invincibleTimer >= self.shieldActiveTimeWarningFPS:
                 if self.shieldPhase == 0:
                     self.game.soundFx.stopSound('shield2')
                     self.game.soundFx.playSoundContinuously('shield4')
@@ -50,7 +54,7 @@ class Shield(element.Element):
                     self.currentFrameNo = self.frameBlank
                     if int(self.invincibleTimer // 2) % 30 and self.shieldPhase == settings.Shield.phaseBlank:
                         countDown = f'{self.shieldCountDown}'
-                        textCountDown = shieldCounter.ShieldCounter(self.game, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, countDown, 'Vinegar Stroke',50)
+                        textCountDown = shieldCounter.ShieldCounter(self.game, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, countDown, settings.Shield.shieldFont ,50)
                         self.game.points.append(textCountDown)
                         self.shieldCountDown -= 1
                         self.shieldPhase = settings.Shield.phaseShow
@@ -64,12 +68,15 @@ class Shield(element.Element):
 
         self.setAnimationFrame(self.animation[self.currentFrameNo],True)
 
-    def activateShield(self):
+    def activateShield(self, timeInSecs=settings.Player.shieldActiveTime):
         if not self.activated:
             self.currentFrameNo = self.frameShield
             self.invincibleTimer = 0
             self.activated = True
             self.shieldCountDown = 3
             self.shieldPhase = settings.Shield.phaseStart
+            self.shieldActiveTime = timeInSecs
+            self.shieldActiveTimeFPS = (timeInSecs * settings.FRAMES_PER_SECOND)
+            self.shieldActiveTimeWarningFPS = (self.shieldActiveTime - settings.Player.invincibleDuration) * settings.FRAMES_PER_SECOND
             self.game.soundFx.playSoundContinuously('shield2')
 

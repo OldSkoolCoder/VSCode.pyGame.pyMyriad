@@ -4,10 +4,10 @@ import element
 import random
 
 class Meteorite(element.Element):
-    def __init__(self,game):
+    def __init__(self,game,X=-50,Y=-50):
 
         imgDir = f'/Asteroids/Small'
-        super().__init__(game,-50,-50,imgDir)
+        super().__init__(game,X,Y,imgDir)
 
         meteorSet = "ABCDEF"[random.randint(0,5)]
         self.rotation = random.randint(0,1)
@@ -28,10 +28,11 @@ class Meteorite(element.Element):
 
         super().setAnimationFrame(self.animation[0],True,self.hitBoxScaler)
 
-        self.Y = 5 + self.rect.height / 2
+        if self.Y == -50:
+            self.Y = 5 + self.rect.height / 2
+            self.X = random.randint((settings.PlayableArea.LeftMost + (self.rect.width + 10)), (settings.PlayableArea.RightMost - (self.rect.width + 10)))
+    
         self.dY = 1
-
-        self.X = random.randint((settings.PlayableArea.LeftMost + (self.rect.width + 10)), (settings.PlayableArea.RightMost - (self.rect.width + 10)))
         self.dX = self.determineRandomDirection()
 
     def update(self):
