@@ -27,10 +27,10 @@ import planets
 import bonus
 import shieldCounter
 
-#TODO : High Score
+# TODO : High Score - Complete
 # Game Over Screen
-# Added Multipliers Bonuses
-# Add Difficulty selector
+# Added Multipliers Bonuses - Complete
+# Add Difficulty selector - Complete
 
 
 class Game:
@@ -271,14 +271,15 @@ class Game:
                     if event.key == pygame.K_F1:
                         waiting = False
 
-                    if event.key == pygame.K_1:
-                        self.gameDifficulty = settings.Bonus.bonusEasy
-                    if event.key == pygame.K_2:
-                        self.gameDifficulty = settings.Bonus.bonusNormal
-                    if event.key == pygame.K_3:
-                        self.gameDifficulty = settings.Bonus.bonusHard
-                    if event.key == pygame.K_4:
-                        self.gameDifficulty = settings.Bonus.bonusPleaseDontHurtMe
+                    if event.key == pygame.K_LEFT:
+                        self.gameDifficulty -= .5
+                    if event.key == pygame.K_RIGHT:
+                        self.gameDifficulty += .5
+
+                    if self.gameDifficulty == 0:
+                        self.gameDifficulty = .5
+                    elif self.gameDifficulty == 2.5:
+                        self.gameDifficulty = 2
 
             self.screen.fill(settings.Colours.RED3)
 
