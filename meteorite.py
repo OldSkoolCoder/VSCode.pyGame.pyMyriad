@@ -19,7 +19,7 @@ class Meteorite(element.Element):
         # Required for Hostile Group
         self.imDead = False
         self.reflective = False
-        self.myValue = 10
+        self.myValue = (10 * game.gameDifficulty) * self.game.gameMultiplier
 
         self.noOfFrames = 16
 

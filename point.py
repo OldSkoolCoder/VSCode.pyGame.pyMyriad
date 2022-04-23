@@ -10,11 +10,11 @@ class Point():
         self.fontSize = settings.Point.fontSize
         self.X = X
         self.Y = Y
-        self.value = Value
+        self.value = int(Value)
         self.alpha = settings.Point.defaultAlpha
         self.game = Game
 
-        self.game.totalPoints += Value
+        self.game.totalPoints += int(Value)
 
 
     def draw(self):

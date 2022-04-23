@@ -2,7 +2,7 @@
 
 TITLE = "Myriad"
 FRAMES_PER_SECOND = 60
-AVALIABLE_BONUSES = ['Cannons', 'ExtraLife', 'ExtraShield', 'FireSpread', 'IronMan', 'Multiplier2', 'MultiplierA', 'RapidFire', 'SuperBomb']
+AVALIABLE_BONUSES = ['Cannons', 'ExtraLife', 'ExtraShield', 'FireSpread', 'IronMan', 'Multiplier x 2', 'Multiplier x 10', 'RapidFire', 'SuperBomb']
 
 class Screen:
     WIDTH = 700             # Had to adjust for my laptop screen size (garymeg)
@@ -20,6 +20,7 @@ class General:
     myriadFontSize = 100
     oskFont = 'MODENINE.TTF'
     oskFontSize = 66
+    gameMultiplierDuration = 20 * FRAMES_PER_SECOND
 class PlayableArea:
     Top = 0
     Bottom = Screen.HEIGHT - 50
@@ -64,6 +65,10 @@ class Point:
 
 class Bonus:
     bonusFont = 'Vinegar Stroke'
+    bonusEasy = .5
+    bonusNormal = 1
+    bonusHard = 1.5
+    bonusPleaseDontHurtMe = 2
 
 class Colours:
     # Define Colours

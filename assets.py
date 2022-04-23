@@ -66,8 +66,8 @@ class Assets():
         self.animationsSets['Bonus']['ExtraShield'] = self.loadAnimationSeries('/Bonus', 'BonusExtraShield',2,0,.7)
         self.animationsSets['Bonus']['FireSpread'] = self.loadAnimationSeries('/Bonus', 'BonusFireSpread',2,0,.7)
         self.animationsSets['Bonus']['IronMan'] = self.loadAnimationSeries('/Bonus', 'BonusIronMan',2,0,.7)
-        self.animationsSets['Bonus']['Multiplier2'] = self.loadAnimationSeries('/Bonus', 'BonusMultiplier2',2,0,.7)
-        self.animationsSets['Bonus']['MultiplierA'] = self.loadAnimationSeries('/Bonus', 'BonusMultiplierA',2,0,.7)
+        self.animationsSets['Bonus']['Multiplier x 2'] = self.loadAnimationSeries('/Bonus', 'BonusMultiplier2',2,0,.7)
+        self.animationsSets['Bonus']['Multiplier x 10'] = self.loadAnimationSeries('/Bonus', 'BonusMultiplierA',2,0,.7)
         self.animationsSets['Bonus']['RapidFire'] = self.loadAnimationSeries('/Bonus', 'BonusRapidFire',2,0,.7)
         self.animationsSets['Bonus']['SuperBomb'] = self.loadAnimationSeries('/Bonus', 'BonusSuperBomb',2,0,1)
 

@@ -19,7 +19,7 @@ class Asteroid(element.Element):
         # Required for Hostile Group
         self.imDead = False
         self.reflective = False
-        self.myValue = 25
+        self.myValue = (25 * game.gameDifficulty) * self.game.gameMultiplier
 
         self.noOfFrames = 16
 

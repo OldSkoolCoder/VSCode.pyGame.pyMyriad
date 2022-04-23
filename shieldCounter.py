@@ -19,7 +19,7 @@ class ShieldCounter():
     def draw(self):
         pgFont = pygame.font.Font(settings.Point.fontDir + self.fontName, self.fontSize)
 
-        textSurface = pgFont.render(str(self.value), True, (self.alpha, 0, 0))
+        textSurface = pgFont.render(str(self.value), True, (255, 0, 0))
         textRect = textSurface.get_rect()
         textRect.centerx = self.X
         textRect.centery = self.Y

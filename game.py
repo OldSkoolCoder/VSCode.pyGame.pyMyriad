@@ -95,6 +95,7 @@ class Game:
         self.newHighScore = False
         self.totalPoints = 0
         self.nextShipScoreTarget = settings.General.newShipTarget
+        self.gameMultiplierTimer = 0
 
         # Starts a new game
         self.allSprites = pygame.sprite.Group()
@@ -135,6 +136,12 @@ class Game:
 
             if self.tickCounter == 0 and not self.BonusAlreadyDropped:
                 self.dropABonus()
+
+            if self.gameMultiplier != 1:
+                if self.gameMultiplierTimer == 0:
+                    self.gameMultiplier = 1
+                else:
+                    self.gameMultiplierTimer -=1
 
             self.events()
             self.update()
@@ -255,7 +262,7 @@ class Game:
 
     def showStartScreen(self):
         # Show the start screen of the game
-        self.screen.fill(settings.Colours.RED3)
+        self.gameDifficulty = settings.Bonus.bonusEasy
         waiting = True
         while waiting:
             for event in pygame.event.get():
@@ -264,13 +271,26 @@ class Game:
                     if event.key == pygame.K_F1:
                         waiting = False
 
+                    if event.key == pygame.K_1:
+                        self.gameDifficulty = settings.Bonus.bonusEasy
+                    if event.key == pygame.K_2:
+                        self.gameDifficulty = settings.Bonus.bonusNormal
+                    if event.key == pygame.K_3:
+                        self.gameDifficulty = settings.Bonus.bonusHard
+                    if event.key == pygame.K_4:
+                        self.gameDifficulty = settings.Bonus.bonusPleaseDontHurtMe
+
+            self.screen.fill(settings.Colours.RED3)
+
             self.ShowText(settings.General.oskFont, settings.General.oskFontSize,'OldSkoolCoder',settings.Colours.WHITE,settings.Screen.WIDTH / 2, 80)
             self.ShowText(settings.General.oskFont, int(settings.General.oskFontSize * .66),'and Crew Presents',settings.Colours.WHITE,settings.Screen.WIDTH / 2, 120)
+            self.ShowText('kberry.ttf', 80,'A Easter 2022 Teaching Project',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 200)
             self.ShowText('kberry.ttf', 100,'A Steve Clark Game',settings.Colours.BLACK,settings.Screen.WIDTH / 2, 280)
             self.ShowText(settings.General.myriadFont, settings.General.myriadFontSize,'MYRIAD',settings.Colours.BLUE,settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2)
-            self.ShowText('kberry.ttf', 80,'A Easter 2022 Teaching Project',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 530)
-            self.ShowText('kberry.ttf', 60,'Using Python language and pygame',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 600)
-            self.ShowText('Vinegar Stroke.ttf', 50,'Coded in 24 Hrs',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 670)
+            self.ShowText('kberry.ttf', 60,'Using Python and pygame',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 500)
+            pygame.draw.rect(self.screen, settings.Colours.BLACK, ((30 + (320*(self.gameDifficulty-.5)),570),(160,60)))
+            self.ShowText('kberry.ttf', 60,'Easy       Normal      Hard      Oh No!',settings.Colours.WHITE,settings.Screen.WIDTH / 2, 600)
+            self.ShowText('Vinegar Stroke.ttf', 50,'Coded in 24 Hrs',settings.Colours.DARKORANGE,settings.Screen.WIDTH / 2, 700)
             self.ShowText('Vinegar Stroke.ttf', 60,'Press "F1" to Start',settings.Colours.BLACK,settings.Screen.WIDTH / 2, 750)
 
             pygame.display.flip()
@@ -382,7 +402,7 @@ class Game:
         self.points.append(textWaveTitle)
         self.soundFx.playSound(f'round{self.wave}')
 
-        for i in range(self.level * settings.Hostile.noPerLevel):
+        for i in range(int((self.level * settings.Hostile.noPerLevel) *self.gameDifficulty)):
             if self.wave == 1:
                 self.hostiles.add(floaters.Floater(self, i, self.wave))
             elif self.wave == 2:
@@ -515,10 +535,12 @@ class Game:
             for eachHostile in self.hostiles:
                 eachHostile.imDead = True
                 self.points.append(point.Point(self, eachHostile.X, eachHostile.Y, eachHostile.myValue, settings.Point.pointsFont))
-        elif bonusName == "Multiplier2":
-            pass
-        elif bonusName == "MultiplierA":
-            pass
+        elif bonusName == "Multiplierx2":
+            self.gameMultiplier = 2
+            self.gameMultiplierTimer = settings.General.gameMultiplierDuration
+        elif bonusName == "Multiplierx10":
+            self.gameMultiplier = 10
+            self.gameMultiplierTimer = settings.General.gameMultiplierDuration
 
     def dropABonus(self):
         if random.random() < .22:

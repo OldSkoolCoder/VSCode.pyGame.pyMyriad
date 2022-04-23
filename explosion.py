@@ -28,4 +28,5 @@ class Explosion(element.Element):
         self.tickCounter +=1
         if self.tickCounter >= self.noOfFrames - 1:
             self.imDone = True
+            self.tickCounter = self.noOfFrames - 1
 

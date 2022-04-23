@@ -18,7 +18,7 @@ class Meteor(element.Element):
         # Required for Hostile Group
         self.imDead = False
         self.reflective = False
-        self.myValue = 18
+        self.myValue = (18 * game.gameDifficulty) * self.game.gameMultiplier
 
         self.noOfFrames = 16
 
