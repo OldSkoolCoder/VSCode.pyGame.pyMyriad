@@ -78,6 +78,7 @@ class Game:
         self.bonus = pygame.sprite.Group()
         self.points = []
         self.totalPoints = 0
+        self.highScore = 1000
         self.noOfLives = 0
         self.noOfShields = 0
         self.gameMultiplier = 1
@@ -91,6 +92,7 @@ class Game:
         self.noOfLives = 4
         self.noOfShields = 3
         self.BonusAlreadyDropped = True
+        self.newHighScore = False
         self.totalPoints = 0
         self.nextShipScoreTarget = settings.General.newShipTarget
 
@@ -538,6 +540,23 @@ class Game:
         textRect.topright = (settings.PlayableArea.RightMost, settings.PlayableArea.Top)
 
         self.screen.blit(textSurface, textRect)
+
+        if self.totalPoints > self.highScore:
+            self.highScore = self.totalPoints
+            if self.newHighScore == False:
+                self.newHighScore = True
+                self.soundFx.playSound('newhighscore')
+                textBonus = shieldCounter.ShieldCounter(self, settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2, "New Highscore!", settings.Bonus.bonusFont,10,1)
+                self.points.append(textBonus)
+                    
+        textSurface = pgFont.render(settings.General.hiScoreText + format(str(self.highScore).rjust(7,'0')), True, (settings.Colours.LIGHTSEAGREEN))
+        textRect = textSurface.get_rect()
+        textRect.topleft = (settings.PlayableArea.LeftMost, settings.PlayableArea.Top)
+
+        self.screen.blit(textSurface, textRect)
+
+
+
 
         if self.totalPoints >= self.nextShipScoreTarget:
             self.addLife()

@@ -12,8 +12,9 @@ class Screen:
 class General:
     waveIntoFont = 'Vinegar Stroke'
     scoreBoardFont = "GAMEPLAY-1987.ttf"
-    scoreBoardFontSize = 33
-    scoreBoardText = "SCORE : "
+    scoreBoardFontSize = 28
+    scoreBoardText = "SCORE :"
+    hiScoreText = "HISCORE :"
     newShipTarget = 100000
     myriadFont = 'Digitek.ttf'
     myriadFontSize = 100
