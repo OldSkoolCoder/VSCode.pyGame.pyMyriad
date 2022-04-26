@@ -1,6 +1,7 @@
 import pygame
 import settings
 import random
+import game
 
 class Point():
     def __init__(self, Game, X, Y, Value, FontName):
@@ -14,13 +15,13 @@ class Point():
         self.alpha = settings.Point.defaultAlpha
         self.game = Game
 
-        self.game.totalPoints += int(Value)
+        self.game.totalPoints += int((Value * Game.gameMultiplier) * Game.gameDifficulty)
 
 
     def draw(self):
         pgFont = pygame.font.Font(settings.Point.fontDir + self.fontName, self.fontSize)
 
-        textSurface = pgFont.render(str(self.value), True, (0, self.alpha, self.alpha))
+        textSurface = pgFont.render(str(int((self.value * self.game.gameMultiplier) * self.game.gameDifficulty)), True, (0, self.alpha, self.alpha))
         textRect = textSurface.get_rect()
         textRect.centerx = self.X
         textRect.centery = self.Y

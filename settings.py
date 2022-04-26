@@ -18,6 +18,7 @@ class General:
     newShipTarget = 100000
     myriadFont = 'Digitek.ttf'
     myriadFontSize = 100
+    gameOverFontSize = 70
     oskFont = 'MODENINE.TTF'
     oskFontSize = 66
     gameMultiplierDuration = 20 * FRAMES_PER_SECOND
