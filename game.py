@@ -1,3 +1,5 @@
+from math import fabs
+import string
 import pygame
 import random
 import settings
@@ -77,7 +79,7 @@ class Game:
         self.passive = pygame.sprite.Group()
         self.bonus = pygame.sprite.Group()
         self.points = []
-        self.totalPoints = 0
+        # self.totalPoints = 0
         self.highScore = 1000
         self.noOfLives = 0
         self.noOfShields = 0
@@ -267,6 +269,9 @@ class Game:
         while waiting:
             for event in pygame.event.get():
                 # check for closing the window
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    waiting = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_F1:
                         waiting = False
@@ -298,7 +303,38 @@ class Game:
 
     def showGameOverScreen(self):
         # show the Game over screen
-        pass
+        waiting = True
+        pygame.mixer.music.stop()  #stop music
+        for eachExplosion in self.explosions:
+            self.explosions.remove(eachExplosion)
+        while waiting:
+            for event in pygame.event.get():
+                # check for closing the window
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    waiting = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_F1:
+                        waiting = False
+                    if event.key == pygame.K_LEFT:
+                        self.gameDifficulty -= .5
+                    if event.key == pygame.K_RIGHT:
+                        self.gameDifficulty += .5
+
+                    if self.gameDifficulty == 0:
+                        self.gameDifficulty = .5
+                    elif self.gameDifficulty == 2.5:
+                        self.gameDifficulty = 2
+
+            self.screen.fill(settings.Colours.RED3)
+            self.ShowText(settings.General.myriadFont, settings.General.gameOverFontSize,'GAME OVER',settings.Colours.BLUE,settings.Screen.WIDTH / 2, settings.Screen.WIDTH / 2 - 150)
+            self.ShowText('Vinegar Stroke.ttf', 50,f'You scored {self.totalPoints} points',settings.Colours.BLACK,settings.Screen.WIDTH / 2, settings.Screen.HEIGHT / 2)
+            if self.newHighScore:
+                self.ShowText('Vinegar Stroke.ttf', 50,'and set a new high score!',settings.Colours.BLACK,settings.Screen.WIDTH / 2, settings.Screen.WIDTH / 2 + 100)
+            self.ShowText('Vinegar Stroke.ttf', 60,'Press "F1" to play again',settings.Colours.WHITE,settings.Screen.WIDTH / 2, settings.Screen.WIDTH / 2 + 350)
+            pygame.draw.rect(self.screen, settings.Colours.BLACK, ((30 + (320*(self.gameDifficulty-.5)),570),(160,60)))
+            self.ShowText('kberry.ttf', 60,'Easy       Normal      Hard      Oh No!',settings.Colours.WHITE,settings.Screen.WIDTH / 2, 600)
+            pygame.display.flip()
 
     def removeDoneBullets(self):
         for eachBullet in self.bullets:
@@ -353,8 +389,8 @@ class Game:
                             #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
                             #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
                             #     self.hostiles.add(meteorite.Meteorite(self,eachHostile.X,eachHostile.Y))
-                        else:
-                            self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave, self.powerUp))
+                    else:
+                        self.ordinance.add(reflectedBullet.ReflectedBullet(self, eachBullet.X, eachBullet.Y, self.wave, self.powerUp))
                 
                 eachBullet.done = True
 
